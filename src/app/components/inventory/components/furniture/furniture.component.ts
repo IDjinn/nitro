@@ -26,6 +26,7 @@ export class InventoryFurnitureComponent extends InventorySharedComponent implem
     public mouseDown: boolean = false;
 
     private _filteredItems: GroupItem[] = [];
+    private _favoritedItems: GroupItem[] = [];
     private _subscription: Subscription = null;
     private _hasGroupItems: boolean = false;
 
@@ -70,6 +71,19 @@ export class InventoryFurnitureComponent extends InventorySharedComponent implem
         this._inventoryService.furniController = null;
     }
 
+    public selectItemToDelete(item: GroupItem)
+    {
+        if(!item) return;
+
+        if(this.isDeletingItems)
+        {
+            if(!this.toDeleteItems.includes(item))
+                this.toDeleteItems.push(item);
+            else
+                this.toDeleteItems.splice(this.toDeleteItems.indexOf(item), 1);
+        }
+    }
+
     private refreshInventory(): void
     {
         let groupItems = this._inventoryService.controller.furnitureService.groupItems;
@@ -99,7 +113,7 @@ export class InventoryFurnitureComponent extends InventorySharedComponent implem
             });
         }
 
-        this._filteredItems = groupItems;
+        this._filteredItems = groupItems.filter(x => this._favoritedItems.includes(x) == false);
     }
 
     private prepareInventory(): void
@@ -171,13 +185,13 @@ export class InventoryFurnitureComponent extends InventorySharedComponent implem
             {
                 if(this.roomPreviewer)
                 {
-                    let wallType        = Nitro.instance.roomEngine.getRoomInstanceVariable<string>(Nitro.instance.roomEngine.activeRoomId, RoomObjectVariable.ROOM_WALL_TYPE);
-                    let floorType       = Nitro.instance.roomEngine.getRoomInstanceVariable<string>(Nitro.instance.roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
-                    let landscapeType   = Nitro.instance.roomEngine.getRoomInstanceVariable<string>(Nitro.instance.roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
+                    let wallType = Nitro.instance.roomEngine.getRoomInstanceVariable<string>(Nitro.instance.roomEngine.activeRoomId, RoomObjectVariable.ROOM_WALL_TYPE);
+                    let floorType = Nitro.instance.roomEngine.getRoomInstanceVariable<string>(Nitro.instance.roomEngine.activeRoomId, RoomObjectVariable.ROOM_FLOOR_TYPE);
+                    let landscapeType = Nitro.instance.roomEngine.getRoomInstanceVariable<string>(Nitro.instance.roomEngine.activeRoomId, RoomObjectVariable.ROOM_LANDSCAPE_TYPE);
 
-                    wallType        = (wallType && wallType.length) ? wallType : '101';
-                    floorType       = (floorType && floorType.length) ? floorType : '101';
-                    landscapeType   = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
+                    wallType = (wallType && wallType.length) ? wallType : '101';
+                    floorType = (floorType && floorType.length) ? floorType : '101';
+                    landscapeType = (landscapeType && landscapeType.length) ? landscapeType : '1.1';
 
                     this.roomPreviewer.reset(false);
                     this.roomPreviewer.updateObjectRoom(floorType, wallType, landscapeType);
@@ -186,9 +200,9 @@ export class InventoryFurnitureComponent extends InventorySharedComponent implem
                     {
                         this.roomPreviewer.updateRoomWallsAndFloorVisibility(true, true);
 
-                        floorType       = ((furnitureItem.category === FurniCategory._Str_3683) ? this.selectedGroup.stuffData.getLegacyString() : floorType);
-                        wallType        = ((furnitureItem.category === FurniCategory._Str_3639) ? this.selectedGroup.stuffData.getLegacyString() : wallType);
-                        landscapeType   = ((furnitureItem.category === FurniCategory._Str_3432) ? this.selectedGroup.stuffData.getLegacyString() : landscapeType);
+                        floorType = ((furnitureItem.category === FurniCategory._Str_3683) ? this.selectedGroup.stuffData.getLegacyString() : floorType);
+                        wallType = ((furnitureItem.category === FurniCategory._Str_3639) ? this.selectedGroup.stuffData.getLegacyString() : wallType);
+                        landscapeType = ((furnitureItem.category === FurniCategory._Str_3432) ? this.selectedGroup.stuffData.getLegacyString() : landscapeType);
 
                         this.roomPreviewer.updateObjectRoom(floorType, wallType, landscapeType);
 
@@ -256,8 +270,8 @@ export class InventoryFurnitureComponent extends InventorySharedComponent implem
 
         if(!itemsInTrade || !itemsInTrade.length) return;
 
-        let coreItem: IFurnitureItem    = null;
-        const itemIds: number[]           = [];
+        let coreItem: IFurnitureItem = null;
+        const itemIds: number[] = [];
 
         for(const item of itemsInTrade)
         {
@@ -297,7 +311,7 @@ export class InventoryFurnitureComponent extends InventorySharedComponent implem
 
     public get groupItems(): GroupItem[]
     {
-        return this._filteredItems;
+        return [...this._favoritedItems, ...this._filteredItems];
     }
 
 
@@ -337,5 +351,37 @@ export class InventoryFurnitureComponent extends InventorySharedComponent implem
     public get hasGroupItems(): boolean
     {
         return this._hasGroupItems;
+    }
+
+    public get isDeletingItems(): boolean
+    {
+        return this._inventoryService.isDeletingItems;
+    }
+
+    public get toDeleteItems(): GroupItem[]
+    {
+        return this._inventoryService.toDeleteItems;
+    }
+
+    public get favoritedItems(): GroupItem[]
+    {
+        return this._favoritedItems;
+    }
+
+    public favorite(item: GroupItem)
+    {
+        if(!item) return;
+
+        this._favoritedItems.push(item);
+    }
+
+    public unfavorite(item: GroupItem)
+    {
+        if(!item) return;
+        const index = this._favoritedItems.indexOf(item);
+        if(index < 0)
+            return;
+
+        this._favoritedItems.splice(index, 1);
     }
 }

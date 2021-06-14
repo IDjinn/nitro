@@ -14,8 +14,8 @@ export class NitroLocalizationManager extends NitroManager implements INitroLoca
     {
         super();
 
-        this._definitions   = new Map();
-        this._parameters    = new Map();
+        this._definitions = new Map();
+        this._parameters = new Map();
         this._romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII', 'XXVIII', 'XXIX', 'XXX'];
     }
 
@@ -32,8 +32,8 @@ export class NitroLocalizationManager extends NitroManager implements INitroLoca
         {
             request.open('GET', url);
 
-            request.onloadend   = this.onLocalizationLoaded.bind(this);
-            request.onerror     = this.onLocalizationFailed.bind(this);
+            request.onloadend = this.onLocalizationLoaded.bind(this);
+            request.onerror = this.onLocalizationFailed.bind(this);
 
             request.send();
         }
@@ -95,7 +95,7 @@ export class NitroLocalizationManager extends NitroManager implements INitroLoca
 
             if(parameters)
             {
-                for(const [ parameter, replacement ] of parameters)
+                for(const [parameter, replacement] of parameters)
                 {
                     value = value.replace('%' + parameter + '%', replacement);
                 }
@@ -109,7 +109,7 @@ export class NitroLocalizationManager extends NitroManager implements INitroLoca
     {
         const value = this.getValue(key, false);
 
-        const replacedValue =  value.replace('%' + parameter + '%', replacement);
+        const replacedValue = value.replace('%' + parameter + '%', replacement);
 
         if(value.startsWith('%{'))
         {
@@ -125,7 +125,7 @@ export class NitroLocalizationManager extends NitroManager implements INitroLoca
 
             if(!result) return replacedValue;
 
-            let indexKey =  -1;
+            let indexKey = -1;
             const replacementAsNumber = Number.parseInt(replacement);
             let replace = false;
 
@@ -208,7 +208,11 @@ export class NitroLocalizationManager extends NitroManager implements INitroLoca
 
     public getBadgeDesc(key: string): string
     {
-        return '';
+        const local2 = new BadgeBaseAndLevel(key);
+        const keys = ['badge_desc_' + key, 'badge_desc_' + local2.base];
+        const local3 = this._Str_2103(this.getExistingKey(keys))
+            .replace('%roman%', this.getRomanNumeral(local2.level));
+        return local3;
     }
 
     private getExistingKey(keys: string[]): string
@@ -222,7 +226,7 @@ export class NitroLocalizationManager extends NitroManager implements INitroLoca
         return '';
     }
 
-    private  _Str_2103(k: string): string
+    private _Str_2103(k: string): string
     {
         return k.replace('${', '$')
             .replace('{', '$')

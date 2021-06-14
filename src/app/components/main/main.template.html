@@ -11,7 +11,7 @@
     <nitro-call-for-help-main-component></nitro-call-for-help-main-component>
     <nitro-pedia-main-component></nitro-pedia-main-component>
     <nitro-avatar-editor-main-component [visible]="avatarEditorVisible"></nitro-avatar-editor-main-component>
-    <nitro-hotelview-component *ngIf="landingViewVisible"></nitro-hotelview-component>
+    <nitro-hotelview-component [visible]="landingViewVisible"></nitro-hotelview-component>
     <nitro-toolbar-component [isInRoom]="!landingViewVisible"></nitro-toolbar-component>
     <nitro-friendlist-main-component [visible]="friendListVisible"></nitro-friendlist-main-component>
     <nitro-catalog-main-component [visible]="catalogVisible"></nitro-catalog-main-component>
@@ -22,6 +22,6 @@
     <nitro-user-settings-component [visible]="userSettingsVisible"></nitro-user-settings-component>
     <nitro-wired-main-component></nitro-wired-main-component>
     <nitro-group-main-component></nitro-group-main-component>
-    <nitro-mod-tool-main-component [visible]="modToolVisible"></nitro-mod-tool-main-component>
+    <nitro-mod-tool-main-component></nitro-mod-tool-main-component>
     <nitro-room-component></nitro-room-component>
 </div>

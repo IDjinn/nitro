@@ -3,6 +3,10 @@
     width: $inventory-width;
     max-width: $inventory-width;
 
+    .to-delete-items{
+        margin-left: 45%;
+    }
+
     .grid-container {
 
         .grid-items {
@@ -11,10 +15,35 @@
                 height: 50px;
                 max-height: 50px;
 
+                .favorite{
+                    top: 0.16rem;
+                    left: 3px;
+                    font-size: 10px;
+                    width: 20px;
+                    height: 20px;
+
+                    i{
+                        color: yellow;
+                    }
+                }
+
                 .count {
                     top: 0.16rem;
                     right: 3px;
                     font-size: 10px;
+                    width: 20px;
+                    height: 20px;
+                }
+                .deleting-icon{
+    border-radius: 5px;
+    border-color: white;
+    color:white
+                }
+                .deleting {
+    border-radius: 5px;
+    border-color: red;
+    background-color: red;
+    opacity: 0.8;
                 }
             }
         }

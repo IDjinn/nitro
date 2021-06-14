@@ -21,19 +21,19 @@ export class SettingsService
         private _ngZone: NgZone
     )
     {
-        this._isReady               = false;
-        this._avatarEditorVisible   = false;
-        this._navigatorVisible      = false;
-        this._catalogVisible        = false;
-        this._inventoryVisible      = false;
-        this._friendlistVisible     = false;
-        this._userProfileVisible    = false;
-        this._achievementsVisible   = false;
-        this._meMenuVisible         = false;
-        this._chatHistoryVisible    = false;
-        this._userSettingsVisible   = false;
-        this._floorPlanVisible      = false;
-        this._userContextVisible    = true;
+        this._isReady = false;
+        this._avatarEditorVisible = false;
+        this._navigatorVisible = false;
+        this._catalogVisible = false;
+        this._inventoryVisible = false;
+        this._friendlistVisible = false;
+        this._userProfileVisible = false;
+        this._achievementsVisible = false;
+        this._meMenuVisible = false;
+        this._chatHistoryVisible = false;
+        this._userSettingsVisible = false;
+        this._floorPlanVisible = false;
+        this._userContextVisible = true;
     }
 
     public showAvatarEditor(): void
@@ -58,6 +58,8 @@ export class SettingsService
 
     public toggleAvatarEditor(): void
     {
+        if(!this._avatarEditorVisible)
+            this._meMenuVisible = false;
         this._avatarEditorVisible = !this._avatarEditorVisible;
     }
 
@@ -138,6 +140,8 @@ export class SettingsService
 
     public toggleAchievements(): void
     {
+        if(!this._achievementsVisible)
+            this._meMenuVisible = false;
         this._achievementsVisible = !this._achievementsVisible;
     }
 
@@ -183,6 +187,8 @@ export class SettingsService
 
     public toggleUserSettings(): void
     {
+        if(!this._userSettingsVisible)
+            this._meMenuVisible = false;
         this._userSettingsVisible = !this._userSettingsVisible;
     }
 

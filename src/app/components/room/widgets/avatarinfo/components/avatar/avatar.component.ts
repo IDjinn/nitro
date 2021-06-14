@@ -15,12 +15,13 @@ import { RoomAvatarInfoComponent } from '../main/main.component';
 })
 export class RoomAvatarInfoAvatarComponent extends AvatarContextInfoView
 {
-    private static MODE_NORMAL: number          = 0;
-    private static MODE_MODERATE: number        = 1;
-    private static MODE_MODERATE_BAN: number    = 2;
-    private static MODE_MODERATE_MUTE: number   = 3;
-    private static MODE_AMBASSADOR: number      = 4;
+    private static MODE_NORMAL: number = 0;
+    private static MODE_MODERATE: number = 1;
+    private static MODE_MODERATE_BAN: number = 2;
+    private static MODE_MODERATE_MUTE: number = 3;
+    private static MODE_AMBASSADOR: number = 4;
     private static MODE_AMBASSADOR_MUTE: number = 5;
+    private static MODE_WHISPER: number = 6;
 
     @ViewChild('activeView')
     public activeView: ElementRef<HTMLDivElement>;
@@ -49,8 +50,8 @@ export class RoomAvatarInfoAvatarComponent extends AvatarContextInfoView
     {
         let giveHandItem = false;
 
-        const handler       = this.widget.handler;
-        const roomObject    = handler.container.roomEngine.getRoomObject(handler.roomSession.roomId, handler.container.roomSession.ownRoomIndex, RoomObjectCategory.UNIT);
+        const handler = this.widget.handler;
+        const roomObject = handler.container.roomEngine.getRoomObject(handler.roomSession.roomId, handler.container.roomSession.ownRoomIndex, RoomObjectCategory.UNIT);
 
         if(roomObject)
         {
@@ -254,16 +255,42 @@ export class RoomAvatarInfoAvatarComponent extends AvatarContextInfoView
                         visible: true
                     }
                 ]
+            },
+            {
+                mode: RoomAvatarInfoAvatarComponent.MODE_WHISPER,
+                items: [
+                    {
+                        name: 'sussurro',
+                        localization: 'infostand.button.whisper',
+                        visible: true
+                    },
+                    {
+                        name: 'sussurro_em_grupo',
+                        localization: 'infostand.button.whisper.group.join',
+                        visible: this.isWhispering() == false
+                    },
+                    {
+                        name: 'sussurro_em_grupo',
+                        localization: 'infostand.button.whisper.group.leave',
+                        visible: this.isWhispering()
+                    },
+                    {
+                        name: 'back',
+                        localization: 'generic.back',
+                        visible: true
+                    },
+                ]
             }
         ];
     }
 
     public processAction(name: string): void
     {
-        let messageType: string         = null;
-        let message: RoomWidgetMessage  = null;
-        let hideMenu           = true;
+        let messageType: string = null;
+        let message: RoomWidgetMessage = null;
+        let hideMenu = true;
 
+        console.log('actin -', name);
         if(name)
         {
             switch(name)
@@ -301,7 +328,16 @@ export class RoomAvatarInfoAvatarComponent extends AvatarContextInfoView
                     this.setMode(RoomAvatarInfoAvatarComponent.MODE_NORMAL);
                     break;
                 case 'whisper':
+                    // messageType = RoomWidgetUserActionMessage.RWUAM_WHISPER_USER;
+                    hideMenu = false;
+                    this.setMode(RoomAvatarInfoAvatarComponent.MODE_WHISPER);
+                    break;
+                case 'sussurro':
                     messageType = RoomWidgetUserActionMessage.RWUAM_WHISPER_USER;
+                    break;
+                case 'sussurro_em_grupo':
+                    this.toggleWhispering();
+                    messageType = RoomWidgetUserActionMessage.RWUAM_WHISPER_GROUP;
                     break;
                 case 'friend':
                     this.avatarData.canBeAskedForAFriend = false;
@@ -416,6 +452,16 @@ export class RoomAvatarInfoAvatarComponent extends AvatarContextInfoView
     private isShowRemoveRights(): boolean
     {
         return (this.avatarData._Str_3246 && (this.avatarData._Str_5599 === RoomControllerLevel.GUEST) && !this.avatarData._Str_3672);
+    }
+
+    private isWhispering(): boolean
+    {
+        return this.avatarData.isWhispering;
+    }
+
+    private toggleWhispering()
+    {
+        this.avatarData.isWhispering = !this.avatarData.isWhispering;
     }
 
     public toggleVisibility(): void

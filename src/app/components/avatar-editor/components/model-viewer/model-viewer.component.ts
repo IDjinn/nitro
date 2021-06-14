@@ -19,7 +19,7 @@ export class AvatarEditorModelViewerComponent implements OnChanges
     private _activeCategory: CategoryData;
 
     constructor(private _avatarEditorService: AvatarEditorService)
-    {}
+    { }
 
     public ngOnChanges(changes: SimpleChanges): void
     {

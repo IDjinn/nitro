@@ -4,6 +4,7 @@ import { CatalogPageData } from '../../../../../client/nitro/communication/messa
 import { CatalogPageOfferData } from '../../../../../client/nitro/communication/messages/parser/catalog/utils/CatalogPageOfferData';
 import { ICatalogPageData } from '../../../../../client/nitro/communication/messages/parser/catalog/utils/ICatalogPageData';
 import { ICatalogPageParser } from '../../../../../client/nitro/communication/messages/parser/catalog/utils/ICatalogPageParser';
+import { MarketplaceOfferItem } from '../../../../../client/nitro/communication/messages/parser/catalog/utils/MarketplaceOfferItem';
 import { Nitro } from '../../../../../client/nitro/Nitro';
 import { IObjectData } from '../../../../../client/nitro/room/object/data/IObjectData';
 import { RoomPreviewer } from '../../../../../client/nitro/room/preview/RoomPreviewer';
@@ -18,7 +19,6 @@ import { FurniCategory } from '../../enums/FurniCategory';
 import { ProductTypeEnum } from '../../enums/ProductTypeEnum';
 import { CatalogService } from '../../services/catalog.service';
 import { MarketplaceService } from '../../services/marketplace.service';
-import { MarketplaceOfferItem } from '../../../../../client/nitro/communication/messages/parser/catalog/utils/MarketplaceOfferItem';
 
 @Component({
     selector: 'nitro-catalog-main-component',
@@ -64,8 +64,8 @@ export class CatalogMainComponent implements OnInit, OnChanges, OnDestroy
 
     public ngOnInit(): void
     {
-        this._catalogService.component  = this;
-        this._layoutFactory             = new CatalogLayoutFactory();
+        this._catalogService.component = this;
+        this._layoutFactory = new CatalogLayoutFactory();
 
         if(!this._roomPreviewer)
         {
@@ -86,7 +86,7 @@ export class CatalogMainComponent implements OnInit, OnChanges, OnDestroy
             }
             else
             {
-                this.removeLastComponent();
+                //this.removeLastComponent();
             }
         }
     }
@@ -100,16 +100,16 @@ export class CatalogMainComponent implements OnInit, OnChanges, OnDestroy
 
         this.reset();
 
-        this._catalogService.component  = null;
-        this._layoutFactory             = null;
+        this._catalogService.component = null;
+        this._layoutFactory = null;
     }
 
     public reset(): void
     {
         this.removeLastComponent();
 
-        this._activeTab     = null;
-        this._activeOffer   = null;
+        this._activeTab = null;
+        this._activeOffer = null;
 
         this.hidePurchaseConfirmation();
     }
@@ -122,12 +122,12 @@ export class CatalogMainComponent implements OnInit, OnChanges, OnDestroy
 
     public hidePurchaseConfirmation(): void
     {
-        this._purchaseOfferPage     = null;
-        this._purchaseOffer         = null;
+        this._purchaseOfferPage = null;
+        this._purchaseOffer = null;
         this._purchaseOfferQuantity = 1;
-        this._purchaseOfferExtra    = null;
+        this._purchaseOfferExtra = null;
         this._purchaseVipSubscription = null;
-        this._purchaseGiftOffer     = null;
+        this._purchaseGiftOffer = null;
         this._showGiftConfigurator = false;
 
     }
@@ -209,7 +209,7 @@ export class CatalogMainComponent implements OnInit, OnChanges, OnDestroy
         if(this.layoutsContainer) this.layoutsContainer.remove();
 
         this._lastComponent = null;
-        this._activeOffer   = null;
+        this._activeOffer = null;
     }
 
     public selectTab(tab: CatalogPageData): void
@@ -290,8 +290,8 @@ export class CatalogMainComponent implements OnInit, OnChanges, OnDestroy
 
                         if(furniData.specialType === FurniCategory.FIGURE_PURCHASABLE_SET)
                         {
-                            const setIds: number[]  = [];
-                            const sets              = furniData.customParams.split(',');
+                            const setIds: number[] = [];
+                            const sets = furniData.customParams.split(',');
 
                             for(const set of sets)
                             {
@@ -372,10 +372,10 @@ export class CatalogMainComponent implements OnInit, OnChanges, OnDestroy
             return;
         }
 
-        this._purchaseOfferPage     = page;
-        this._purchaseOffer         = offer;
+        this._purchaseOfferPage = page;
+        this._purchaseOffer = offer;
         this._purchaseOfferQuantity = quantity;
-        this._purchaseOfferExtra    = extra;
+        this._purchaseOfferExtra = extra;
         if(isGift)
         {
             this._purchaseGiftOffer = offer;

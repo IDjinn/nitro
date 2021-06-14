@@ -1,8 +1,8 @@
 import { Component, Input, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { ModToolService } from '../../services/mod-tool.service';
 import { SettingsService } from '../../../../core/settings/service';
-import { UserToolUser } from '../user/user-tool/user-tool-user';
 import { ModToolUserInfoService } from '../../services/mod-tool-user-info.service';
+import { ModToolService } from '../../services/mod-tool.service';
+import { UserToolUser } from '../user/user-tool/user-tool-user';
 
 @Component({
     selector: 'nitro-mod-tool-main-component',
@@ -11,7 +11,7 @@ import { ModToolUserInfoService } from '../../services/mod-tool-user-info.servic
 export class ModToolMainComponent implements OnInit, OnDestroy
 {
     @Input()
-    public visible: boolean = false;
+    public visible: boolean = true;
 
     public roomToolVisible: boolean = false;
     public chatlogToolVisible: boolean = false;
@@ -40,7 +40,7 @@ export class ModToolMainComponent implements OnInit, OnDestroy
 
     public toggleRoomTool(): void
     {
-        this.roomToolVisible = !this.roomToolVisible;
+        this._modToolService.showRoomTools = !this._modToolService.showRoomTools;
     }
 
     public openRoomTool(): void
@@ -53,11 +53,18 @@ export class ModToolMainComponent implements OnInit, OnDestroy
         this._modToolService.openChatlogTool();
     }
 
+    public toggleChatlogTool(): void
+    {
+        this._modToolService.showRoomChatLogs = !this._modToolService.showRoomChatLogs;
+        if(this._modToolService.showRoomChatLogs)
+            this._modToolService.openChatlogTool();
+    }
+
     public selectUser(): void
     {
+        this.userToolVisible = !this.userToolVisible;
         this.clickedUser = this.selectedUser;
         this._modToolsUserService.load(this.selectedUser.id);
-        this.userToolVisible = true;
     }
 
     public toggleReportsTool(): void
@@ -108,5 +115,20 @@ export class ModToolMainComponent implements OnInit, OnDestroy
     public get showRoomTool(): boolean
     {
         return this._modToolService.showRoomTools;
+    }
+
+    public toggleModTools()
+    {
+        this.visible = !this.visible;
+    }
+
+    public toggleItemsTool()
+    {
+        this._modToolService.toggleItemTool();
+    }
+
+    public get showItemTool()
+    {
+        return this._modToolService.showItemTool;
     }
 }

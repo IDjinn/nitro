@@ -1,1 +1,4 @@
-<button *ngFor="let thread of threads" type="button" class="btn btn-secondary w-100 mb-1" [ngClass]="{ 'active': (currentThread === thread) }" (click)="selectThread(thread)">{{ thread.participant.name }}</button>
+<button *ngFor="let thread of threads" type="button" class="btn btn-secondary w-100 mb-1" [ngClass]="{ 'active': (currentThread === thread) }" (click)="selectThread(thread)">
+            <div class="avatar-list-img" nitro-avatar-image [headOnly]="1" [figure]="thread.participant.figure" [direction]="2"></div>
+            {{ thread.participant.name }}
+</button>

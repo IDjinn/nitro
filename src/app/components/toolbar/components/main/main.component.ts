@@ -17,8 +17,8 @@ import { SessionService } from '../../../../security/services/session.service';
 import { AchievementsService } from '../../../achievements/services/achievements.service';
 import { FriendListService } from '../../../friendlist/services/friendlist.service';
 import { InventoryService } from '../../../inventory/services/inventory.service';
-import { NavigatorService } from '../../../navigator/services/navigator.service';
 import { ModToolService } from '../../../mod-tool/services/mod-tool.service';
+import { NavigatorService } from '../../../navigator/services/navigator.service';
 
 @Component({
     selector: 'nitro-toolbar-component',
@@ -120,6 +120,9 @@ export class ToolbarMainComponent implements OnInit, OnDestroy
             case ToolbarIconEnum.FRIEND_LIST:
                 this.toggleFriendList();
                 return;
+            case ToolbarIconEnum.MOD_TOOLS:
+                this.toogleModTools();
+                return;
             case ToolbarIconEnum.ME_MENU:
                 this.toggleMeMenu();
 
@@ -132,7 +135,7 @@ export class ToolbarMainComponent implements OnInit, OnDestroy
     {
         if(!iconName || !image || !this.navigationListElement) return;
 
-        iconName  = this.getIconName(iconName);
+        iconName = this.getIconName(iconName);
 
         if(iconName === '') return;
 
@@ -140,23 +143,23 @@ export class ToolbarMainComponent implements OnInit, OnDestroy
 
         if(target)
         {
-            image.className         = 'toolbar-icon-animation';
-            image.style.visibility  = 'visible';
-            image.style.left        = (x + 'px');
-            image.style.top         = (y + 'px');
+            image.className = 'toolbar-icon-animation';
+            image.style.visibility = 'visible';
+            image.style.left = (x + 'px');
+            image.style.top = (y + 'px');
 
             document.body.append(image);
 
-            const targetBounds  = target.getBoundingClientRect();
-            const imageBounds   = image.getBoundingClientRect();
+            const targetBounds = target.getBoundingClientRect();
+            const imageBounds = image.getBoundingClientRect();
 
-            const left    = (imageBounds.x - targetBounds.x);
-            const top     = (imageBounds.y - targetBounds.y);
+            const left = (imageBounds.x - targetBounds.x);
+            const top = (imageBounds.y - targetBounds.y);
             const squared = Math.sqrt(((left * left) + (top * top)));
-            const wait    = (500 - Math.abs(((((1 / squared) * 100) * 500) * 0.5)));
-            const height  = 20;
+            const wait = (500 - Math.abs(((((1 / squared) * 100) * 500) * 0.5)));
+            const height = 20;
 
-            const motionName = (`ToolbarBouncing[${ iconName }]`);
+            const motionName = (`ToolbarBouncing[${iconName}]`);
 
             if(!Motions._Str_19320(motionName))
             {
@@ -249,5 +252,20 @@ export class ToolbarMainComponent implements OnInit, OnDestroy
     public get unseenAchievementsCount(): number
     {
         return this._achievementService.unseenCount;
+    }
+
+    public get meMenuIsClosed(): boolean
+    {
+        return this.settingsService.meMenuVisible == false;
+    }
+
+    public toogleModTools()
+    {
+        return this._modToolsService.toggleModTools();
+    }
+
+    public get haveModTools()
+    {
+        return Nitro.instance.sessionDataManager.isModerator;
     }
 }

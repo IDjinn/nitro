@@ -2,13 +2,15 @@ import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@
 import { Nitro } from '../../../../../client/nitro/Nitro';
 import { RoomPreviewer } from '../../../../../client/nitro/room/preview/RoomPreviewer';
 import { SettingsService } from '../../../../core/settings/service';
+import { NotificationChoice } from '../../../notification/components/choices/choices.component';
+import { NotificationService } from '../../../notification/services/notification.service';
+import { FurnitureItem } from '../../items/FurnitureItem';
 import { InventoryBadgeService } from '../../services/badge.service';
 import { InventoryBotService } from '../../services/bot.service';
 import { InventoryFurnitureService } from '../../services/furniture.service';
 import { InventoryService } from '../../services/inventory.service';
 import { InventoryPetService } from '../../services/pet.service';
 import { InventoryTradingService } from '../../services/trading.service';
-import { FurnitureItem } from '../../items/FurnitureItem';
 
 @Component({
     selector: 'nitro-inventory-main-component',
@@ -22,6 +24,7 @@ export class InventoryMainComponent implements OnInit, OnDestroy, OnChanges
     private _roomPreviewer: RoomPreviewer = null;
 
     constructor(
+        private _notificationService: NotificationService,
         private _settingsService: SettingsService,
         private _inventoryService: InventoryService,
         private _inventoryFurnitureService: InventoryFurnitureService,
@@ -29,7 +32,7 @@ export class InventoryMainComponent implements OnInit, OnDestroy, OnChanges
         private _inventoryPetService: InventoryPetService,
         private _inventoryBadgeService: InventoryBadgeService,
         private _inventoryTradingService: InventoryTradingService)
-    {}
+    { }
 
     public ngOnInit(): void
     {
@@ -70,33 +73,33 @@ export class InventoryMainComponent implements OnInit, OnDestroy, OnChanges
     public showFurniture(): void
     {
         this._inventoryService.furnitureVisible = true;
-        this._inventoryService.botsVisible      = false;
-        this._inventoryService.petsVisible      = false;
-        this._inventoryService.badgesVisible    = false;
+        this._inventoryService.botsVisible = false;
+        this._inventoryService.petsVisible = false;
+        this._inventoryService.badgesVisible = false;
     }
 
     public showBots(): void
     {
         this._inventoryService.furnitureVisible = false;
-        this._inventoryService.botsVisible      = true;
-        this._inventoryService.petsVisible      = false;
-        this._inventoryService.badgesVisible    = false;
+        this._inventoryService.botsVisible = true;
+        this._inventoryService.petsVisible = false;
+        this._inventoryService.badgesVisible = false;
     }
 
     public showPets(): void
     {
         this._inventoryService.furnitureVisible = false;
-        this._inventoryService.botsVisible      = false;
-        this._inventoryService.petsVisible      = true;
-        this._inventoryService.badgesVisible    = false;
+        this._inventoryService.botsVisible = false;
+        this._inventoryService.petsVisible = true;
+        this._inventoryService.badgesVisible = false;
     }
 
     public showBadges(): void
     {
         this._inventoryService.furnitureVisible = false;
-        this._inventoryService.botsVisible      = false;
-        this._inventoryService.petsVisible      = false;
-        this._inventoryService.badgesVisible    = true;
+        this._inventoryService.botsVisible = false;
+        this._inventoryService.petsVisible = false;
+        this._inventoryService.badgesVisible = true;
     }
 
     public updateItemLocking(): void
@@ -223,5 +226,31 @@ export class InventoryMainComponent implements OnInit, OnDestroy, OnChanges
     public get badgeUnseenCount(): number
     {
         return this._inventoryService.badgeUnseenCount;
+    }
+
+    public openDeleteItemsDialog()
+    {
+        if(this._inventoryService.isDeletingItems)
+        {
+            return this._notificationService.alertWithConfirm('${inventory.delete.some.items.dialog}', '${inventory.delete.some.items.confirm}', () =>
+            {
+                return this._inventoryService.deleteItems(false);
+            });
+        }
+
+        const choices = [
+            new NotificationChoice('inventory.delete.all.items', () =>
+            {
+                return this._inventoryService.deleteItems(true);
+            }, []),
+            new NotificationChoice('inventory.delete.some.items', () =>
+            {
+                this._inventoryService.isDeletingItems = true;
+            }, [])
+        ];
+        this._notificationService.alertWithChoices(
+            Nitro.instance.localization.getValue('inventory.delete.items.dialog.title'),
+            choices,
+            Nitro.instance.localization.getValue('inventory.delete.items.dialog.desc'));
     }
 }

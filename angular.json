@@ -1,99 +1,92 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1,
-  "newProjectRoot": "projects",
-  "projects": {
-    "nitro": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist",
-            "resourcesOutputPath": "assets",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
-            "showCircularDependencies": false,
-            "aot": true,
-            "vendorChunk": true,
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "src/assets/",
-                "ignore": [
-                  "**/*.scss"
-                ],
-                "output": "/assets/"
-              },
-              "src/configuration.json"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "webWorkerTsConfig": "tsconfig.worker.json"
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "nitro": {
+            "projectType": "application",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "scss"
                 }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": false,
-              "vendorChunk": true,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "5mb",
-                  "maximumError": "10mb"
+            },
+            "root": "",
+            "sourceRoot": "src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:browser",
+                    "options": {
+                        "outputPath": "dist",
+                        "resourcesOutputPath": "assets",
+                        "index": "src/index.html",
+                        "main": "src/main.ts",
+                        "polyfills": "src/polyfills.ts",
+                        "tsConfig": "tsconfig.app.json",
+                        "showCircularDependencies": false,
+                        "aot": true,
+                        "vendorChunk": true,
+                        "assets": [
+                            {
+                                "glob": "**/*",
+                                "input": "src/assets/",
+                                "ignore": ["**/*.scss"],
+                                "output": "/assets/"
+                            },
+                            "src/configuration.json"
+                        ],
+                        "styles": ["src/styles.scss"],
+                        "webWorkerTsConfig": "tsconfig.worker.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": false,
+                            "vendorChunk": true,
+                            "buildOptimizer": true,
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "5mb",
+                                    "maximumError": "10mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb",
+                                    "maximumError": "10kb"
+                                }
+                            ]
+                        }
+                    }
                 },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "browserTarget": "nitro:build",
+                        "host": "0.0.0.0",
+                        "port": 8080,
+                        "disableHostCheck": true
+                    },
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "nitro:build:production"
+                        }
+                    }
                 }
-              ]
             }
-          }
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "nitro:build",
-            "host": "localhost",
-            "port": 8080,
-            "disableHostCheck": true,
-            "allowedHosts": [
-              ""
-            ]
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "nitro:build:production"
-            }
-          }
         }
-      }
+    },
+    "defaultProject": "nitro",
+    "cli": {
+        "analytics": false
     }
-  },
-  "defaultProject": "nitro",
-  "cli": {
-    "analytics": false
-  }
 }

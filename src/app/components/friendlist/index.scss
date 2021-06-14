@@ -8,6 +8,16 @@
         max-width: 99%;
     }
 }
+        .avatar-list-img {
+            width: 50px;
+            height: 50px;
+
+            img {
+    position: relative;
+    top: -30px;
+    left: -50px;
+            }
+        }
 
 .nitro-friendlist-thread-viewer-component {
     .thread-viewer-user {
@@ -41,15 +51,17 @@
             flex-direction: row;
 
             .thread-viewer-list-item-message {
-                background:$secondary
+                background:$secondary;
+    max-width: 300px;
             }
 
             &.thread-viewer-list-right {
                 align-self: flex-end;
                 flex-direction: row-reverse;
-                
+
                 .thread-viewer-list-item-message {
                     background:$blue;
+    max-width: 300px;
                 }
 
                 .avatar-image {
@@ -57,5 +69,5 @@
                 }
             }
         }
-    } 
+    }
 }

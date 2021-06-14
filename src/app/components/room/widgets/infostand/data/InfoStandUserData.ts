@@ -162,21 +162,53 @@ export class InfoStandUserData
         return (this.type === RoomWidgetUpdateInfostandUserEvent.BOT);
     }
 
+    public get displayBadges(): [string[]]
+    {
+        const allBadges = this.badges;
+        if(allBadges.length <= 0)
+            return [[]];
+
+        const groupBadge = this.groupBadgeId;
+        const displayBadges: [string[]] = [[]];
+
+        if(groupBadge)
+        {
+            displayBadges[0] = [allBadges.shift(), groupBadge];
+        }
+        else
+        {
+            displayBadges[0] = [allBadges.shift()];
+        }
+        for(let k = 1; k < 3; k++)
+        {
+            displayBadges[k] = [];
+            for(let i = 1; i <= 2; i++)
+            {
+                if(allBadges.length <= 0)
+                    return displayBadges;
+
+                displayBadges[k].push(allBadges.shift());
+            }
+        }
+
+        return displayBadges;
+    }
+
     public populate(event: RoomWidgetUpdateInfostandUserEvent): void
     {
-        this.id                 = event.webID;
-        this.name               = event.name;
-        this.figure             = event.figure;
-        this.motto              = event.motto;
-        this.badges             = event.badges;
-        this.groupId            = event.groupId;
-        this.groupName          = event.groupName;
-        this.groupBadgeId       = event.groupBadgeId;
-        this.activityPoints     = event.activityPoints;
-        this.respectLeft        = event.respectLeft;
-        this.petRespectLeft     = 0;
-        this.carryItem          = event.carryId;
-        this.roomIndex          = event.roomIndex;
-        this.type               = event.type;
+        this.id = event.webID;
+        this.name = event.name;
+        this.figure = event.figure;
+        this.motto = event.motto;
+        this.badges = event.badges;
+        this.groupId = event.groupId;
+        this.groupName = event.groupName;
+        this.groupBadgeId = event.groupBadgeId;
+        this.activityPoints = event.activityPoints;
+        this.respectLeft = event.respectLeft;
+        this.petRespectLeft = 0;
+        this.carryItem = event.carryId;
+        this.roomIndex = event.roomIndex;
+        this.type = event.type;
     }
 }

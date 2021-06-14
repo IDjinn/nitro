@@ -20,6 +20,7 @@ export class AvatarInfoData
     private _targetRoomControllerLevel: number = 0;
     private _isFriend: boolean = false;
     private _isAmbassador: boolean = false;
+    private _isWhispering: boolean = false;
 
     public get _Str_3655(): boolean
     {
@@ -191,6 +192,16 @@ export class AvatarInfoData
         return this._isAmbassador;
     }
 
+    public get isWhispering(): boolean
+    {
+        return this._isWhispering;
+    }
+
+    public set isWhispering(val)
+    {
+        this._isWhispering = val;
+    }
+
     public populate(k: RoomWidgetUpdateInfostandUserEvent): void
     {
         this._amIAnyRoomController = k.isModerator;
@@ -211,5 +222,7 @@ export class AvatarInfoData
         this._carryItemType = k.carryId;
         this._isFriend = k.isFriend;
         this._isAmbassador = k.isAmbassador;
+        // TODO FIX ME
+        this._isWhispering = k.isRoomOwner;
     }
 }

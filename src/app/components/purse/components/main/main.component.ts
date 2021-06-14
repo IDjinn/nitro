@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Nitro } from '../../../../../client/nitro/Nitro';
 import { FriendlyTime } from '../../../../../client/nitro/utils/FriendlyTime';
+import { ModToolService } from '../../../mod-tool/services/mod-tool.service';
 import { PurseService } from '../../services/purse.service';
 
 @Component({
@@ -9,8 +10,8 @@ import { PurseService } from '../../services/purse.service';
 })
 export class PurseMainComponent implements OnInit
 {
-    constructor(private _purseService: PurseService)
-    {}
+    constructor(private _purseService: PurseService, private _modToolsService: ModToolService)
+    { }
 
     public ngOnInit(): void
     {
@@ -50,5 +51,10 @@ export class PurseMainComponent implements OnInit
     public get isReady(): boolean
     {
         return this._purseService.isReady;
+    }
+
+    public get fps()
+    {
+        return Math.round(Nitro.instance.ticker.FPS);
     }
 }

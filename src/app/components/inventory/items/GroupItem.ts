@@ -31,19 +31,19 @@ export class GroupItem
 
     constructor(type: number, category: number, roomEngine: IRoomEngine, stuffData: IObjectData, extra: number)
     {
-        this._type              = type;
-        this._category          = category;
-        this._roomEngine        = roomEngine;
-        this._stuffData         = stuffData;
-        this._extra             = extra;
-        this._isWallItem        = false;
-        this._iconUrl           = null;
-        this._name              = null;
-        this._description       = null;
-        this._locked            = false;
-        this._selected          = false;
-        this._hasUnseenItems    = false;
-        this._items             = new AdvancedMap();
+        this._type = type;
+        this._category = category;
+        this._roomEngine = roomEngine;
+        this._stuffData = stuffData;
+        this._extra = extra;
+        this._isWallItem = false;
+        this._iconUrl = null;
+        this._name = null;
+        this._description = null;
+        this._locked = false;
+        this._selected = false;
+        this._hasUnseenItems = false;
+        this._items = new AdvancedMap();
     }
 
     public prepareGroup(): void
@@ -76,8 +76,8 @@ export class GroupItem
 
         if(!furnitureItem) return items;
 
-        let found   = 0;
-        let i       = 0;
+        let found = 0;
+        let i = 0;
 
         while(i < this._items.length)
         {
@@ -148,8 +148,8 @@ export class GroupItem
 
         if(this._category === FurniCategory._Str_12351)
         {
-            let count   = 0;
-            let i       = 0;
+            let count = 0;
+            let i = 0;
 
             while(i < this._items.length)
             {
@@ -259,6 +259,37 @@ export class GroupItem
     private setDescription(): void
     {
         this._description = '';
+        const k = this.getLastItem();
+
+        if(!k)
+        {
+            this._description = '';
+
+            return;
+        }
+
+        let key = '';
+
+        switch(this._category)
+        {
+            case FurniCategory._Str_5186:
+                key = (('poster_' + k.stuffData.getLegacyString()) + '_desc');
+                break;
+            case FurniCategory._Str_9125:
+                this._description = 'SONG_NAME';
+                return;
+            default:
+                if(this.isWallItem)
+                {
+                    key = ('wallItem.desc.' + k.type);
+                }
+                else
+                {
+                    key = ('roomItem.desc.' + k.type);
+                }
+        }
+
+        this._description = Nitro.instance.getLocalization(key);
     }
 
     private setIcon(): void

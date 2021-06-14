@@ -38,6 +38,9 @@
                         <div class="d-flex flex-column justify-content-center flex-grow-1 ml-2">
                             <p class="mb-0">{{ selectedBadgeName }}</p>
                         </div>
+                        <div class="d-flex flex-column justify-content-center flex-grow-1 ml-2">
+                            <p class="mb-0">{{ selectedBadgeDesc }}</p>
+                        </div>
                     </div>
                     <div class="d-flex">
                         <button type="button" [disabled]="badgeButtonDisabled" class="btn btn-secondary" (click)="wearBadge()">{{ (isWearingBadge(selectedBadge) ? 'inventory.badges.clearbadge' : 'inventory.badges.wearbadge') | translate }}</button>

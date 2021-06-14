@@ -23,6 +23,7 @@ import { RoomWidgetEnum } from '../../../client/nitro/ui/widget/enums/RoomWidget
 import { HabboWebTools } from '../../../client/nitro/utils/HabboWebTools';
 import { RoomId } from '../../../client/room/utils/RoomId';
 import { SettingsService } from '../../core/settings/service';
+import { ModToolService } from '../mod-tool/services/mod-tool.service';
 import { NotificationService } from '../notification/services/notification.service';
 import { RoomComponent } from '../room/room.component';
 import { RoomAvatarInfoComponent } from '../room/widgets/avatarinfo/components/main/main.component';
@@ -76,13 +77,14 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit, ILink
     constructor(
         private _notificationService: NotificationService,
         private _settingsService: SettingsService,
+        private _modToolsService: ModToolService,
         private _ngZone: NgZone)
     {
-        this.onRoomEngineEvent          = this.onRoomEngineEvent.bind(this);
-        this.onInterstitialEvent        = this.onInterstitialEvent.bind(this);
-        this.onRoomEngineObjectEvent    = this.onRoomEngineObjectEvent.bind(this);
-        this.onRoomSessionEvent         = this.onRoomSessionEvent.bind(this);
-        this.onRoomErrorEvent           = this.onRoomErrorEvent.bind(this);
+        this.onRoomEngineEvent = this.onRoomEngineEvent.bind(this);
+        this.onInterstitialEvent = this.onInterstitialEvent.bind(this);
+        this.onRoomEngineObjectEvent = this.onRoomEngineObjectEvent.bind(this);
+        this.onRoomSessionEvent = this.onRoomSessionEvent.bind(this);
+        this.onRoomErrorEvent = this.onRoomErrorEvent.bind(this);
         Nitro.instance.addLinkEventTracker(this);
     }
 
@@ -348,7 +350,7 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit, ILink
         (this.roomComponent && this.roomComponent.onRoomEngineObjectEvent(event));
     }
 
-    private onRoomErrorEvent(event: RoomSessionEvent):void
+    private onRoomErrorEvent(event: RoomSessionEvent): void
     {
         if(!event) return;
 
@@ -415,8 +417,11 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit, ILink
 
                 Nitro.instance.roomSessionManager.startSession(event.session);
                 return;
-            case RoomSessionEvent.STARTED:
+            case RoomSessionEvent.STARTED: {
+                if(Nitro.instance.sessionDataManager.roomHistoryManager)
+                    Nitro.instance.sessionDataManager.roomHistoryManager.onEnterRoom(event.session.roomId);
                 return;
+            }
             case RoomSessionEvent.ROOM_DATA:
                 return;
             case RoomSessionEvent.ENDED:
@@ -502,11 +507,6 @@ export class MainComponent implements OnInit, OnDestroy, AfterContentInit, ILink
     public get chatHistoryVisible(): boolean
     {
         return this._settingsService.chatHistoryVisible;
-    }
-
-    public get modToolVisible(): boolean
-    {
-        return Nitro.instance.sessionDataManager.isModerator;
     }
 
     public get userSettingsVisible(): boolean

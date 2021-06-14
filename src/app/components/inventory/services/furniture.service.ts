@@ -1,12 +1,21 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { IMessageEvent } from '../../../../client/core/communication/messages/IMessageEvent';
+import { MarketplaceConfigEvent } from '../../../../client/nitro/communication/messages/incoming/catalog/MarketplaceConfigEvent';
+import { MarketplaceItemStatsEvent } from '../../../../client/nitro/communication/messages/incoming/catalog/MarketplaceItemStatsEvent';
 import { FurnitureListAddOrUpdateEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/furni/FurnitureListAddOrUpdateEvent';
 import { FurnitureListEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/furni/FurnitureListEvent';
 import { FurnitureListInvalidateEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/furni/FurnitureListInvalidateEvent';
 import { FurnitureListRemovedEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/furni/FurnitureListRemovedEvent';
 import { FurniturePostItPlacedEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/furni/FurniturePostItPlacedEvent';
+import { MarketplaceItemPostedEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/marketplace/MarketplaceItemPostedEvent';
+import { MarketplaceSellItemEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/marketplace/MarketplaceSellItemEvent';
+import { MarketplaceRequesstItemStatsComposer } from '../../../../client/nitro/communication/messages/outgoing/catalog/marketplace/MarketplaceRequesstItemStatsComposer';
+import { MarketplaceRequestComposer } from '../../../../client/nitro/communication/messages/outgoing/catalog/marketplace/MarketplaceRequestComposer';
 import { FurnitureListComposer } from '../../../../client/nitro/communication/messages/outgoing/inventory/furni/FurnitureListComposer';
+import { RequestSellItemComposer } from '../../../../client/nitro/communication/messages/outgoing/inventory/marketplace/RequestSellItemComposer';
 import { FurniturePlacePaintComposer } from '../../../../client/nitro/communication/messages/outgoing/room/furniture/FurniturePlacePaintComposer';
+import { MarketplaceConfigParser } from '../../../../client/nitro/communication/messages/parser/catalog/MarketplaceConfigParser';
+import { MarketplaceItemStatsParser } from '../../../../client/nitro/communication/messages/parser/catalog/MarketplaceItemStatsParser';
 import { FurnitureListItemParser } from '../../../../client/nitro/communication/messages/parser/inventory/furniture/utils/FurnitureListItemParser';
 import { Nitro } from '../../../../client/nitro/Nitro';
 import { RoomObjectPlacementSource } from '../../../../client/nitro/room/enums/RoomObjectPlacementSource';
@@ -14,6 +23,7 @@ import { RoomEngineObjectEvent } from '../../../../client/nitro/room/events/Room
 import { RoomEngineObjectPlacedEvent } from '../../../../client/nitro/room/events/RoomEngineObjectPlacedEvent';
 import { IObjectData } from '../../../../client/nitro/room/object/data/IObjectData';
 import { RoomObjectCategory } from '../../../../client/nitro/room/object/RoomObjectCategory';
+import { NotificationService } from '../../notification/services/notification.service';
 import { InventoryMainComponent } from '../components/main/main.component';
 import { FurniCategory } from '../items/FurniCategory';
 import { FurnitureItem } from '../items/FurnitureItem';
@@ -21,34 +31,23 @@ import { GroupItem } from '../items/GroupItem';
 import { IFurnitureItem } from '../items/IFurnitureItem';
 import { UnseenItemCategory } from '../unseen/UnseenItemCategory';
 import { InventoryService } from './inventory.service';
-import { group } from '@angular/animations';
-import { RequestSellItemComposer } from '../../../../client/nitro/communication/messages/outgoing/inventory/marketplace/RequestSellItemComposer';
-import { MarketplaceSellItemEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/marketplace/MarketplaceSellItemEvent';
-import { NotificationService } from '../../notification/services/notification.service';
-import { MarketplaceConfigEvent } from '../../../../client/nitro/communication/messages/incoming/catalog/MarketplaceConfigEvent';
-import { MarketplaceConfigParser } from '../../../../client/nitro/communication/messages/parser/catalog/MarketplaceConfigParser';
-import { MarketplaceItemStatsEvent } from '../../../../client/nitro/communication/messages/incoming/catalog/MarketplaceItemStatsEvent';
-import { MarketplaceItemStatsParser } from '../../../../client/nitro/communication/messages/parser/catalog/MarketplaceItemStatsParser';
-import { MarketplaceRequestComposer } from '../../../../client/nitro/communication/messages/outgoing/catalog/marketplace/MarketplaceRequestComposer';
-import { MarketplaceRequesstItemStatsComposer } from '../../../../client/nitro/communication/messages/outgoing/catalog/marketplace/MarketplaceRequesstItemStatsComposer';
-import { MarketplaceItemPostedEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/marketplace/MarketplaceItemPostedEvent';
 
 @Injectable()
 export class InventoryFurnitureService implements OnDestroy
 {
-    public static INVENTORY_UPDATED: string             = 'IFS_INVENTORY_UPDATED';
-    public static SELECT_FIRST_GROUP: string            = 'IFS_SELECT_FIRST_GROUP';
+    public static INVENTORY_UPDATED: string = 'IFS_INVENTORY_UPDATED';
+    public static SELECT_FIRST_GROUP: string = 'IFS_SELECT_FIRST_GROUP';
     public static SELECT_EXISTING_GROUP_DEFAULT: string = 'IFS_SELECT_EXISTING_GROUP_DEFAULT';
 
-    private _messages: IMessageEvent[]                                  = [];
-    private _furniMsgFragments: Map<number, FurnitureListItemParser>[]  = null;
-    private _groupItems: GroupItem[]                                    = [];
-    private _search: string                                             = '';
-    private _searchType: string                                         = '';
-    private _itemIdInFurniPlacing: number                               = -1;
-    private _isObjectMoverRequested: boolean                            = false;
-    private _isInitialized: boolean                                     = false;
-    private _needsUpdate: boolean                                       = false;
+    private _messages: IMessageEvent[] = [];
+    private _furniMsgFragments: Map<number, FurnitureListItemParser>[] = null;
+    private _groupItems: GroupItem[] = [];
+    private _search: string = '';
+    private _searchType: string = '';
+    private _itemIdInFurniPlacing: number = -1;
+    private _isObjectMoverRequested: boolean = false;
+    private _isInitialized: boolean = false;
+    private _needsUpdate: boolean = false;
     private _offerOnMarketPlaceItem: FurnitureItem;
     private _marketPlaceConfig: MarketplaceConfigParser;
     private _marketPlaceItemStats: MarketplaceItemStatsParser;
@@ -166,8 +165,8 @@ export class InventoryFurnitureService implements OnDestroy
 
         if(!this._furniMsgFragments) this._furniMsgFragments = new Array(parser.totalFragments);
 
-        const map       = new Map([ ...parser.fragment ]);
-        const merged    = this.mergeFragments(map, parser.totalFragments, parser.fragmentNumber, this._furniMsgFragments);
+        const map = new Map([...parser.fragment]);
+        const merged = this.mergeFragments(map, parser.totalFragments, parser.fragmentNumber, this._furniMsgFragments);
 
         if(!merged) return;
 
@@ -313,7 +312,7 @@ export class InventoryFurnitureService implements OnDestroy
 
         for(const frag of fragments)
         {
-            for(const [ key, value ] of frag) mergedFragment.set(key, value);
+            for(const [key, value] of frag) mergedFragment.set(key, value);
 
             frag.clear();
         }
@@ -325,9 +324,9 @@ export class InventoryFurnitureService implements OnDestroy
 
     private processFragment(fragment: Map<number, FurnitureListItemParser>): void
     {
-        const existingSet           = this.getAllItemIds();
-        const addedSet: number[]    = [];
-        const removedSet: number[]  = [];
+        const existingSet = this.getAllItemIds();
+        const addedSet: number[] = [];
+        const removedSet: number[] = [];
 
         for(const key of fragment.keys())
         {
@@ -438,7 +437,7 @@ export class InventoryFurnitureService implements OnDestroy
             if(groupItem.getItemById(item.id)) return groupItem;
         }
 
-        const unseen    = this.isFurnitureUnseen(item);
+        const unseen = this.isFurnitureUnseen(item);
         const groupItem = this.createGroupItem(item.type, item.category, item.stuffData, item.extra, flag);
 
         groupItem.push(item, unseen);
@@ -569,7 +568,7 @@ export class InventoryFurnitureService implements OnDestroy
         while(i < this._groupItems.length)
         {
             const groupItem = this._groupItems[i];
-            const item      = groupItem.remove(id);
+            const item = groupItem.remove(id);
 
             if(item)
             {
@@ -672,10 +671,22 @@ export class InventoryFurnitureService implements OnDestroy
         return true;
     }
 
+    public favorite(): boolean
+    {
+        const groupItem = this.getSelectedGroup();
+
+        if(!groupItem) return false;
+
+        if(!groupItem.getUnlockedCount()) return false;
+
+        // TODO
+        return true;
+    }
+
     public startRoomObjectPlacementWithoutRequest(item: IFurnitureItem): boolean
     {
-        let category    = 0;
-        let isMoving    = false;
+        let category = 0;
+        let isMoving = false;
 
         if(item.isWallItem) category = RoomObjectCategory.WALL;
         else category = RoomObjectCategory.FLOOR;
@@ -694,8 +705,8 @@ export class InventoryFurnitureService implements OnDestroy
 
     private startRoomObjectPlacement(item: FurnitureItem): void
     {
-        let category    = 0;
-        let isMoving    = false;
+        let category = 0;
+        let isMoving = false;
 
         if(item.isWallItem) category = RoomObjectCategory.WALL;
         else category = RoomObjectCategory.FLOOR;

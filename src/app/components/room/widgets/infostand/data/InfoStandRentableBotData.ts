@@ -135,19 +135,41 @@ export class InfoStandRentableBotData
         this._botSkills = k;
     }
 
+    public get displayBadges(): [string[]]
+    {
+        const allBadges = this.badges;
+        if(allBadges.length <= 0)
+            return [[]];
+
+        const displayBadges: [string[]] = [[allBadges.shift(),]];
+        for(let k = 1; k < 3; k++)
+        {
+            displayBadges[k] = [];
+            for(let i = 1; i <= 2; i++)
+            {
+                if(allBadges.length <= 0)
+                    return displayBadges;
+
+                displayBadges[k].push(allBadges.shift());
+            }
+        }
+
+        return displayBadges;
+    }
+
     public populate(event: RoomWidgetRentableBotInfostandUpdateEvent): void
     {
-        this.id                     = event.id;
-        this.name                   = event.name;
-        this.figure                 = event.figure;
-        this.motto                  = event.motto;
-        this.badges                 = event.badges;
-        this.carryItem              = event.carryId;
-        this.roomIndex              = event.roomIndex;
-        this.ownerId                = event.ownerId;
-        this.ownerName              = event.ownerName;
-        this.amIOwner               = event._Str_3246;
-        this.amIAnyRoomController   = event._Str_3529;
-        this.botSkills              = event.botSkills;
+        this.id = event.id;
+        this.name = event.name;
+        this.figure = event.figure;
+        this.motto = event.motto;
+        this.badges = event.badges;
+        this.carryItem = event.carryId;
+        this.roomIndex = event.roomIndex;
+        this.ownerId = event.ownerId;
+        this.ownerName = event.ownerName;
+        this.amIOwner = event._Str_3246;
+        this.amIAnyRoomController = event._Str_3529;
+        this.botSkills = event.botSkills;
     }
 }

@@ -5,6 +5,7 @@ import { IFurnitureData } from './furniture/IFurnitureData';
 import { IFurnitureDataListener } from './furniture/IFurnitureDataListener';
 import { IgnoredUsersManager } from './IgnoredUsersManager';
 import { IProductData } from './product/IProductData';
+import { RoomHistoryManager } from './RoomHistoryManager';
 
 export interface ISessionDataManager extends INitroManager
 {
@@ -51,4 +52,5 @@ export interface ISessionDataManager extends INitroManager
     isCameraFollowDisabled: boolean;
     chatStyle: number;
     uiFlags: number;
+    roomHistoryManager: RoomHistoryManager
 }

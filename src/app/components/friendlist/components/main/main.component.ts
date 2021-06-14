@@ -52,24 +52,24 @@ export class FriendListMainComponent implements OnInit, OnChanges, OnDestroy
 
     public displayFriends(): void
     {
-        this._friendsVisible    = true;
-        this._currentThread     = null;
+        this._friendsVisible = true;
+        this._currentThread = null;
     }
 
     public selectThread(thread: MessengerThread): void
     {
         if(thread)
         {
-            this._friendsVisible    = false;
-            this._currentThread     = thread;
+            this._friendsVisible = false;
+            this._currentThread = thread;
 
             thread.setRead();
 
             return;
         }
 
-        this._friendsVisible    = true;
-        this._currentThread     = null;
+        this._friendsVisible = true;
+        this._currentThread = null;
     }
 
     public get currentThread(): MessengerThread
@@ -85,5 +85,10 @@ export class FriendListMainComponent implements OnInit, OnChanges, OnDestroy
     public get totalFriendRequests(): number
     {
         return this._friendListService.requests.size;
+    }
+
+    public get currentThreadIsWhisperGroup(): boolean
+    {
+        return true;
     }
 }

@@ -25,6 +25,8 @@ export class AvatarEditorWardrobeComponent
     {
         this._avatarEditorService.wardrobeComponent = this;
         this._requestLooks(this._currentServerPage);
+        this.nextPage();
+        this.previousPage();
     }
 
     public previousPage(): void

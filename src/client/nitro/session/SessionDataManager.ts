@@ -30,6 +30,7 @@ import { ISessionDataManager } from './ISessionDataManager';
 import { IProductData } from './product/IProductData';
 import { IProductDataListener } from './product/IProductDataListener';
 import { ProductDataParser } from './product/ProductDataParser';
+import { RoomHistoryManager } from './RoomHistoryManager';
 
 export class SessionDataManager extends NitroManager implements ISessionDataManager
 {
@@ -71,44 +72,46 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
     private _pendingProductListeners: IProductDataListener[];
 
     private _badgeImageManager: BadgeImageManager;
+    private _roomHistoryManager: RoomHistoryManager;
 
     constructor(communication: INitroCommunicationManager)
     {
         super();
 
-        this._communication                 = communication;
+        this._communication = communication;
 
         this.resetUserInfo();
 
-        this._ignoredUsersManager           = new IgnoredUsersManager(this);
+        this._ignoredUsersManager = new IgnoredUsersManager(this);
+        this._roomHistoryManager = new RoomHistoryManager(this);
 
-        this._clubLevel                     = 0;
-        this._securityLevel                 = 0;
-        this._isAmbassador                  = false;
+        this._clubLevel = 0;
+        this._securityLevel = 0;
+        this._isAmbassador = false;
 
-        this._systemOpen                    = false;
-        this._systemShutdown                = false;
-        this._isAuthenticHabbo              = false;
-        this._isRoomCameraFollowDisabled    = false;
-        this._chatStyle                     = 0;
-        this._uiFlags                       = 0;
+        this._systemOpen = false;
+        this._systemShutdown = false;
+        this._isAuthenticHabbo = false;
+        this._isRoomCameraFollowDisabled = false;
+        this._chatStyle = 0;
+        this._uiFlags = 0;
 
-        this._floorItems                    = new Map();
-        this._wallItems                     = new Map();
-        this._products                      = new Map();
-        this._furnitureData                 = null;
+        this._floorItems = new Map();
+        this._wallItems = new Map();
+        this._products = new Map();
+        this._furnitureData = null;
 
-        this._furnitureReady                = false;
-        this._productsReady                 = false;
-        this._furnitureListenersNotified    = false;
-        this._pendingFurnitureListeners     = [];
-        this._pendingProductListeners       = [];
+        this._furnitureReady = false;
+        this._productsReady = false;
+        this._furnitureListenersNotified = false;
+        this._pendingFurnitureListeners = [];
+        this._pendingProductListeners = [];
 
-        this._badgeImageManager             = null;
+        this._badgeImageManager = null;
 
-        this.onFurnitureDataReadyEvent  = this.onFurnitureDataReadyEvent.bind(this);
-        this.onProductDataReadyEvent    = this.onProductDataReadyEvent.bind(this);
-        this.onNitroSettingsEvent       = this.onNitroSettingsEvent.bind(this);
+        this.onFurnitureDataReadyEvent = this.onFurnitureDataReadyEvent.bind(this);
+        this.onProductDataReadyEvent = this.onProductDataReadyEvent.bind(this);
+        this.onNitroSettingsEvent = this.onNitroSettingsEvent.bind(this);
     }
 
     protected onInit(): void
@@ -118,6 +121,7 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
         this.loadBadgeImageManager();
 
         (this._ignoredUsersManager && this._ignoredUsersManager.init());
+        (this._roomHistoryManager && this._roomHistoryManager.init());
 
         this._communication.registerMessageEvent(new UserFigureEvent(this.onUserFigureEvent.bind(this)));
         this._communication.registerMessageEvent(new UserInfoEvent(this.onUserInfoEvent.bind(this)));
@@ -142,6 +146,14 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
             this._ignoredUsersManager = null;
         }
 
+
+        if(this._roomHistoryManager)
+        {
+            this._roomHistoryManager.dispose();
+
+            this._roomHistoryManager = null;
+        }
+
         Nitro.instance.events.removeEventListener(NitroSettingsEvent.SETTINGS_UPDATED, this.onNitroSettingsEvent);
 
         super.onDispose();
@@ -149,11 +161,11 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
 
     private resetUserInfo(): void
     {
-        this._userId        = 0;
-        this._name          = null;
-        this._figure        = null;
-        this._gender        = null;
-        this._realName      = null;
+        this._userId = 0;
+        this._name = null;
+        this._figure = null;
+        this._gender = null;
+        this._realName = null;
         this._canChangeName = false;
     }
 
@@ -240,8 +252,8 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
     {
         if(!event || !event.connection) return;
 
-        this._figure    = event.getParser().figure;
-        this._gender    = event.getParser().gender;
+        this._figure = event.getParser().figure;
+        this._gender = event.getParser().gender;
 
         HabboWebTools.updateFigure(this._figure);
     }
@@ -256,15 +268,15 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
 
         if(!userInfo) return;
 
-        this._userId            = userInfo.userId;
-        this._name              = userInfo.username;
-        this._figure            = userInfo.figure;
-        this._gender            = userInfo.gender;
-        this._realName          = userInfo.realName;
-        this._respectsReceived  = userInfo.respectsReceived;
-        this._respectsLeft      = userInfo.respectsRemaining;
-        this._respectsPetLeft   = userInfo.respectsPetRemaining;
-        this._canChangeName     = userInfo.canChangeName;
+        this._userId = userInfo.userId;
+        this._name = userInfo.username;
+        this._figure = userInfo.figure;
+        this._gender = userInfo.gender;
+        this._realName = userInfo.realName;
+        this._respectsReceived = userInfo.respectsReceived;
+        this._respectsLeft = userInfo.respectsRemaining;
+        this._respectsPetLeft = userInfo.respectsPetRemaining;
+        this._canChangeName = userInfo.canChangeName;
 
         (this._ignoredUsersManager && this._ignoredUsersManager.requestIgnoredUsers());
     }
@@ -273,9 +285,9 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
     {
         if(!event || !event.connection) return;
 
-        this._clubLevel     = event.getParser().clubLevel;
+        this._clubLevel = event.getParser().clubLevel;
         this._securityLevel = event.getParser().securityLevel;
-        this._isAmbassador  = event.getParser().isAmbassador;
+        this._isAmbassador = event.getParser().isAmbassador;
     }
 
     private onAvailabilityStatusMessageEvent(event: AvailabilityStatusMessageEvent): void
@@ -286,9 +298,9 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
 
         if(!parser) return;
 
-        this._systemOpen        = parser.isOpen;
-        this._systemShutdown    = parser.onShutdown;
-        this._isAuthenticHabbo  = parser.isAuthenticUser;
+        this._systemOpen = parser.isOpen;
+        this._systemShutdown = parser.onShutdown;
+        this._isAuthenticHabbo = parser.isAuthenticUser;
     }
 
     private onChangeNameUpdateEvent(event: ChangeNameUpdateEvent): void
@@ -316,7 +328,7 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
 
         if(parser.webId !== this.userId) return;
 
-        this._name          = parser.newName;
+        this._name = parser.newName;
         this._canChangeName = false;
 
         this.events.dispatchEvent(new UserNameUpdateEvent(this._name));
@@ -363,7 +375,7 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
         this._pendingProductListeners = [];
     }
 
-    private onInClientLinkEvent(event: InClientLinkEvent):void
+    private onInClientLinkEvent(event: InClientLinkEvent): void
     {
         if(!event) return;
 
@@ -376,9 +388,9 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
 
     private onNitroSettingsEvent(event: NitroSettingsEvent): void
     {
-        this._isRoomCameraFollowDisabled    = event.cameraFollow;
-        this._chatStyle                     = event.chatType;
-        this._uiFlags                       = event.flags;
+        this._isRoomCameraFollowDisabled = event.cameraFollow;
+        this._chatStyle = event.chatType;
+        this._uiFlags = event.flags;
 
         this.events.dispatchEvent(new SessionDataPreferencesEvent(this._uiFlags));
     }
@@ -568,6 +580,11 @@ export class SessionDataManager extends NitroManager implements ISessionDataMana
     public get ignoredUsersManager(): IgnoredUsersManager
     {
         return this._ignoredUsersManager;
+    }
+
+    public get roomHistoryManager(): RoomHistoryManager
+    {
+        return this._roomHistoryManager;
     }
 
     public get respectsReceived(): number

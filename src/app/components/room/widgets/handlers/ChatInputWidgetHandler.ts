@@ -2,6 +2,7 @@ import { NitroEvent } from '../../../../../client/core/events/NitroEvent';
 import { RoomSettingsComposer } from '../../../../../client/nitro/communication/messages/outgoing/room/data/RoomSettingsComposer';
 import { Nitro } from '../../../../../client/nitro/Nitro';
 import { RoomZoomEvent } from '../../../../../client/nitro/room/events/RoomZoomEvent';
+import { RoomControllerLevel } from '../../../../../client/nitro/session/enum/RoomControllerLevel';
 import { RoomSessionChatEvent } from '../../../../../client/nitro/session/events/RoomSessionChatEvent';
 import { HabboClubLevelEnum } from '../../../../../client/nitro/session/HabboClubLevelEnum';
 import { IRoomWidgetHandler } from '../../../../../client/nitro/ui/IRoomWidgetHandler';
@@ -16,7 +17,6 @@ import { RoomWidgetChatMessage } from '../messages/RoomWidgetChatMessage';
 import { RoomWidgetChatSelectAvatarMessage } from '../messages/RoomWidgetChatSelectAvatarMessage';
 import { RoomWidgetChatTypingMessage } from '../messages/RoomWidgetChatTypingMessage';
 import { RoomWidgetRequestWidgetMessage } from '../messages/RoomWidgetRequestWidgetMessage';
-import { RoomControllerLevel } from '../../../../../client/nitro/session/enum/RoomControllerLevel';
 
 export class ChatInputWidgetHandler implements IRoomWidgetHandler
 {
@@ -27,19 +27,19 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
     constructor()
     {
-        this._container     = null;
-        this._widget        = null;
+        this._container = null;
+        this._widget = null;
 
-        this._disposed      = false;
+        this._disposed = false;
     }
 
     public dispose(): void
     {
         if(this._disposed) return;
 
-        this._container     = null;
-        this._widget        = null;
-        this._disposed      = true;
+        this._container = null;
+        this._widget = null;
+        this._disposed = true;
     }
 
     public update(): void
@@ -65,13 +65,13 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
                 if(chatMessage.text === '') return null;
 
-                let text    = chatMessage.text;
-                const parts   = chatMessage.text.split(' ');
+                let text = chatMessage.text;
+                const parts = chatMessage.text.split(' ');
 
                 if(parts.length > 0)
                 {
-                    const firstPart   = parts[0];
-                    let secondPart  = '';
+                    const firstPart = parts[0];
+                    let secondPart = '';
 
                     if(parts.length > 1) secondPart = parts[1];
 
@@ -85,8 +85,8 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
                             if(userData)
                             {
-                                secondPart  = userData.name;
-                                text        = chatMessage.text.replace(' x', (' ' + userData.name));
+                                secondPart = userData.name;
+                                text = chatMessage.text.replace(' x', (' ' + userData.name));
                             }
                         }
                     }
@@ -137,16 +137,26 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
                             this._container.roomEngine.createRoomScreenshot(this._container.roomSession.roomId, this._container.getFirstCanvasId());
                             return null;
                         case ':pickall':
-                            this._container.notificationService.alertWithConfirm('${room.confirm.pick_all}', '${generic.alert.title}', () =>
+                            // TODO: more efficient check rights
+                            if(this._container.roomSession.isRoomOwner || this._container.sessionDataManager.isModerator)
                             {
-                                this._container.sessionDataManager.sendSpecialCommandMessage(':pickall');
-                            });
+                                this._container.notificationService.alertWithConfirm('${room.confirm.pick_all}', '${generic.alert.title}', () =>
+                                {
+                                    this._container.sessionDataManager.sendSpecialCommandMessage(':pickall');
+                                });
+                            }
                             return null;
                         case ':furni':
-                            this._container.processWidgetMessage(new RoomWidgetRequestWidgetMessage(RoomWidgetRequestWidgetMessage.RWRWM_FURNI_CHOOSER));
+                            if(this._container.roomSession.isRoomOwner || this._container.sessionDataManager.isModerator)
+                            {
+                                this._container.processWidgetMessage(new RoomWidgetRequestWidgetMessage(RoomWidgetRequestWidgetMessage.RWRWM_FURNI_CHOOSER));
+                            }
                             return null;
                         case ':chooser':
-                            this._container.processWidgetMessage(new RoomWidgetRequestWidgetMessage(RoomWidgetRequestWidgetMessage.RWRWM_USER_CHOOSER));
+                            if(this._container.roomSession.isRoomOwner || this._container.sessionDataManager.isModerator)
+                            {
+                                this._container.processWidgetMessage(new RoomWidgetRequestWidgetMessage(RoomWidgetRequestWidgetMessage.RWRWM_USER_CHOOSER));
+                            }
                             return null;
                         case ':floor':
                         case ':bcfloor':
@@ -221,12 +231,12 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
     public get messageTypes(): string[]
     {
-        return [ RoomWidgetChatTypingMessage.TYPING_STATUS, RoomWidgetChatMessage.MESSAGE_CHAT, RoomWidgetChatSelectAvatarMessage.MESSAGE_SELECT_AVATAR ];
+        return [RoomWidgetChatTypingMessage.TYPING_STATUS, RoomWidgetChatMessage.MESSAGE_CHAT, RoomWidgetChatSelectAvatarMessage.MESSAGE_SELECT_AVATAR];
     }
 
     public get eventTypes(): string[]
     {
-        return [ RoomSessionChatEvent.FLOOD_EVENT ];
+        return [RoomSessionChatEvent.FLOOD_EVENT];
     }
 
     public get container(): IRoomWidgetHandlerContainer

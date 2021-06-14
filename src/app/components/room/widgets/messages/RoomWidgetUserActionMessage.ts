@@ -3,6 +3,7 @@ import { RoomWidgetMessage } from '../../../../../client/nitro/ui/widget/message
 export class RoomWidgetUserActionMessage extends RoomWidgetMessage
 {
     public static RWUAM_WHISPER_USER: string = 'RWUAM_WHISPER_USER';
+    public static RWUAM_WHISPER_GROUP: string = 'RWUAM_WHISPER_GROUP';
     public static RWUAM_IGNORE_USER: string = 'RWUAM_IGNORE_USER';
     public static RWUAM_IGNORE_USER_BUBBLE: string = 'RWUAM_IGNORE_USER_BUBBLE';
     public static RWUAM_UNIGNORE_USER: string = 'RWUAM_UNIGNORE_USER';

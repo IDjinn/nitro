@@ -6,7 +6,7 @@ export class InventorySharedComponent
     constructor(
         protected _inventoryService: InventoryService,
         protected _ngZone: NgZone)
-    {}
+    { }
 
     public get canPlace(): boolean
     {

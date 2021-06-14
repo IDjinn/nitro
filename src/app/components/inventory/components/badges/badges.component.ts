@@ -144,4 +144,9 @@ export class InventoryBadgesComponent extends InventorySharedComponent implement
     {
         return this._achievementService.achievementScore;
     }
+
+    public get selectedBadgeDesc(): string
+    {
+        return ((this.selectedBadge && Nitro.instance.localization.getBadgeDesc(this.selectedBadge)) || null);
+    }
 }

@@ -21,11 +21,11 @@ export class NavigatorSearchItemComponent
     constructor(
         private _navigatorService: NavigatorService,
         private _ngZone: NgZone)
-    {}
+    { }
 
     public visit(): void
     {
-        if(this.room.ownerId !== Nitro.instance.sessionDataManager.userId)
+        if(this.room.ownerId !== Nitro.instance.sessionDataManager.userId && Nitro.instance.sessionDataManager.isAmbassador == false)
         {
             if(this.room.habboGroupId !== 0)
             {

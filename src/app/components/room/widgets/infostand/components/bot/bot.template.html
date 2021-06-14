@@ -10,8 +10,9 @@
             </div>
             <div class="flex-grow-1">
                 <div class="badge-container">
-                    <div *ngFor="let badge of userData.badges" class="badge-item">
-                        <nitro-badge *ngIf="(badge !== '')" [badge]="badge"></nitro-badge>
+                    <div *ngFor="let badges of userData.displayBadges" class="badge-item">
+                        <nitro-badge *ngIf="(badges != null && badges.length > 0 && badges[0])" [badge]="badges[0]"></nitro-badge>
+                        <nitro-badge *ngIf="(badges != null && badges.length > 1 && badges[1])" [badge]="badges[1]"></nitro-badge>
                     </div>
                 </div>
             </div>

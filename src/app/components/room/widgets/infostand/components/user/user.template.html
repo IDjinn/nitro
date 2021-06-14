@@ -11,12 +11,13 @@
     <div class="d-flex flex-column p-3 w-100">
         <div class="d-flex flex-nowrap">
             <div class="body-image overflow-hidden">
-                <div class="avatar-image" avatar-image [figure]="userData.figure" [direction]="4" [asBackground]="true"></div>
+                <div class="avatar-image"  (click)="visitProfile()" avatar-image [figure]="userData.figure" [direction]="4" [asBackground]="true"></div>
             </div>
             <div class="flex-grow-1">
                 <div class="badge-container">
-                    <div *ngFor="let badge of userData.badges" class="badge-item">
-                        <nitro-badge *ngIf="(badge !== '')" [badge]="badge"></nitro-badge>
+                    <div *ngFor="let badges of userData.displayBadges" class="badge-item">
+                        <nitro-badge *ngIf="(badges != null && badges.length > 0 && badges[0])" [badge]="badges[0]"></nitro-badge>
+                        <nitro-badge *ngIf="(badges != null && badges.length > 1 && badges[1])" [badge]="badges[1]"></nitro-badge>
                     </div>
                 </div>
             </div>
@@ -32,6 +33,7 @@
         </div>
         <div class="d-flex flex-column mt-2">
             <p class="badge badge-secondary mb-0">{{ ('extendedprofile.achievementscore') | translate }} {{ userData.activityPoints }}</p>
+            <p class="badge badge-secondary mb-0">{{ ('extendedprofile.respects') | translate }} {{ userData.respectLeft }}</p>
             <p *ngIf="(userData.carryItem > 0)" class="badge badge-secondary mt-2 mb-0">{{ carryText }}</p>
         </div>
     </div>

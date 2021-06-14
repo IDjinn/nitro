@@ -16,42 +16,42 @@ import { RoomInfoStandBaseComponent } from '../base/base.component';
 })
 export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
 {
-    private static PICKUP_MODE_NONE: number     = 0;
-    private static PICKUP_MODE_EJECT: number    = 1;
-    private static PICKUP_MODE_FULL: number     = 2;
+    private static PICKUP_MODE_NONE: number = 0;
+    private static PICKUP_MODE_EJECT: number = 1;
+    private static PICKUP_MODE_FULL: number = 2;
 
     public furniData: InfoStandFurniData = null;
 
-    public pickupMode   = 0;
-    public canMove      = false;
-    public canRotate    = false;
-    public canUse       = false;
+    public pickupMode = 0;
+    public canMove = false;
+    public canRotate = false;
+    public canUse = false;
 
-    public furniSettingsKeys: string[]      = [];
-    public furniSettingsValues: string[]    = [];
-    public isCrackable: boolean             = false;
-    public crackableHits: number            = 0;
-    public crackableTarget: number          = 0;
+    public furniSettingsKeys: string[] = [];
+    public furniSettingsValues: string[] = [];
+    public isCrackable: boolean = false;
+    public crackableHits: number = 0;
+    public crackableTarget: number = 0;
 
     public update(event: RoomWidgetFurniInfostandUpdateEvent): void
     {
-        this.furniSettingsKeys      = [];
-        this.furniSettingsValues    = [];
-        this.isCrackable            = false;
-        this.crackableHits          = 0;
-        this.crackableTarget        = 0;
+        this.furniSettingsKeys = [];
+        this.furniSettingsValues = [];
+        this.isCrackable = false;
+        this.crackableHits = 0;
+        this.crackableTarget = 0;
 
-        let canMove     = false;
-        let canRotate   = false;
-        let canUse      = false;
-        let godMode     = false;
+        let canMove = false;
+        let canRotate = false;
+        let canUse = false;
+        let godMode = false;
 
         const isValidController = (event.roomControllerLevel >= RoomControllerLevel.GUEST);
 
         if(isValidController || event.isOwner || event.isRoomOwner || event.isAnyRoomOwner)
         {
-            canMove     = true;
-            canRotate   = (!event.isWallItem);
+            canMove = true;
+            canRotate = (!event.isWallItem);
 
             if(event.roomControllerLevel >= RoomControllerLevel.MODERATOR) godMode = true;
         }
@@ -67,11 +67,11 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
             {
                 const stuffData = (event.stuffData as CrackableDataType);
 
-                canUse  = true;
+                canUse = true;
 
-                this.isCrackable        = true;
-                this.crackableHits      = stuffData.hits;
-                this.crackableTarget    = stuffData.target;
+                this.isCrackable = true;
+                this.crackableHits = stuffData.hits;
+                this.crackableTarget = stuffData.target;
             }
 
             if(godMode)
@@ -96,9 +96,9 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
             }
         }
 
-        this.canMove    = canMove;
-        this.canRotate  = canRotate;
-        this.canUse     = canUse;
+        this.canMove = canMove;
+        this.canRotate = canRotate;
+        this.canUse = canUse;
 
         this.togglePickupButton(event);
     }
@@ -127,7 +127,7 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
         if(!action || (action === '')) return;
 
         let messageType: string = null;
-        let objectData: string  = null;
+        let objectData: string = null;
 
         switch(action)
         {
@@ -154,7 +154,6 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
                 messageType = RoomWidgetFurniActionMessage.RWFAM_SAVE_STUFF_DATA;
                 objectData = this.getSettingsAsString();
                 break;
-
         }
 
         if(!messageType) return;
@@ -172,7 +171,7 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
 
         while(i < this.furniSettingsKeys.length)
         {
-            const key   = this.furniSettingsKeys[i];
+            const key = this.furniSettingsKeys[i];
             const value = this.furniSettingsValues[i];
 
             data = (data + (key + '=' + value + '\t'));
@@ -200,5 +199,15 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
     public get type(): number
     {
         return InfoStandType.FURNI;
+    }
+
+    public get haveInCatalog()
+    {
+        return true;
+    }
+
+    public openInCatalog()
+    {
+        // TODO
     }
 }

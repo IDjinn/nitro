@@ -1,7 +1,10 @@
 import { Component, Input, NgZone } from '@angular/core';
+import { FollowFriendComposer } from '../../../../../client/nitro/communication/messages/outgoing/friendlist/FollowFriendComposer';
 import { RemoveFriendComposer } from '../../../../../client/nitro/communication/messages/outgoing/friendlist/RemoveFriendComposer';
 import { UserProfileComposer } from '../../../../../client/nitro/communication/messages/outgoing/user/data/UserProfileComposer';
 import { Nitro } from '../../../../../client/nitro/Nitro';
+import { SettingsService } from '../../../../core/settings/service';
+import { NotificationService } from '../../../notification/services/notification.service';
 import { MessengerFriend } from '../../common/MessengerFriend';
 import { MessengerThread } from '../../common/MessengerThread';
 import { FriendListService } from '../../services/friendlist.service';
@@ -18,10 +21,13 @@ export class FriendListFriendsListComponent
     @Input()
     public onlineOnly: boolean = false;
 
+
     constructor(
+        private _notificationService: NotificationService,
         private _friendListService: FriendListService,
+        private _settingsService: SettingsService,
         private _ngZone: NgZone)
-    {}
+    { }
 
     public selectThread(friend: MessengerFriend): void
     {
@@ -32,6 +38,14 @@ export class FriendListFriendsListComponent
         if(!thread) return;
 
         if(this.threadSelector) this.threadSelector(thread);
+    }
+
+    public removeFriendWithConfirm(friend: MessengerFriend)
+    {
+        this._notificationService.alertWithConfirm('${friendlist.removefriend.confirm}', '${friendlist.removefriend.confirm.title}', () =>
+        {
+            this.removeFriend(friend);
+        });
     }
 
     public removeFriend(friend: MessengerFriend): void
@@ -63,5 +77,13 @@ export class FriendListFriendsListComponent
         }
 
         return friends;
+    }
+
+    public followFriend(friend: MessengerFriend): void
+    {
+        if(!friend) return;
+
+        this._settingsService.toggleFriendList();
+        Nitro.instance.communication.connection.send(new FollowFriendComposer(friend.id));
     }
 }

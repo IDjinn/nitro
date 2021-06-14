@@ -40,13 +40,13 @@ export class MeMenuComponent implements OnInit, OnDestroy
         private navigatorService: NavigatorService,
         private _achievementService: AchievementsService,
         private _ngZone: NgZone)
-    {}
+    { }
 
     public ngOnInit(): void
-    {}
+    { }
 
     public ngOnDestroy(): void
-    {}
+    { }
 
     public get isVisible(): boolean
     {
@@ -80,5 +80,10 @@ export class MeMenuComponent implements OnInit, OnDestroy
     public get unseenAchievementsCount(): number
     {
         return this._achievementService.unseenCount;
+    }
+
+    public get meMenuIsClosed(): boolean
+    {
+        return this.settingsService.meMenuVisible == false;
     }
 }

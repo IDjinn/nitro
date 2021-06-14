@@ -2,6 +2,7 @@ import { EventEmitter, Injectable, NgZone, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IMessageEvent } from '../../../../client/core/communication/messages/IMessageEvent';
 import { FigureSetIdsMessageEvent } from '../../../../client/nitro/communication/messages/incoming/inventory/clothes/FigureSetIdsMessageEvent';
+import { EmptyItemsComposer } from '../../../../client/nitro/communication/messages/outgoing/djinn/inventory/EmptyItemsComposer';
 import { Nitro } from '../../../../client/nitro/Nitro';
 import { RoomSessionEvent } from '../../../../client/nitro/session/events/RoomSessionEvent';
 import { IRoomSession } from '../../../../client/nitro/session/IRoomSession';
@@ -12,9 +13,9 @@ import { InventoryFurnitureComponent } from '../components/furniture/furniture.c
 import { InventoryMainComponent } from '../components/main/main.component';
 import { InventoryPetsComponent } from '../components/pets/pets.component';
 import { InventoryTradingComponent } from '../components/trading/trading.component';
+import { GroupItem } from '../items/GroupItem';
 import { UnseenItemCategory } from '../unseen/UnseenItemCategory';
 import { UnseenItemTracker } from '../unseen/UnseenItemTracker';
-import { ModtoolCallForHelpTopicsEvent } from '../../../../client/nitro/communication/messages/incoming/modtool/ModtoolCallForHelpTopicsEvent';
 
 @Injectable()
 export class InventoryService implements OnDestroy
@@ -38,6 +39,8 @@ export class InventoryService implements OnDestroy
     private _petsVisible: boolean = false;
     private _tradingVisible: boolean = false;
     private _marketPlaceOfferVisible: boolean = false;
+    private _isDeletingItems: boolean = false;
+    private _toDeleteItems: GroupItem[] = [];
 
     private _figureSetIds: number[] = [];
     private _boundFurnitureNames: string[] = [];
@@ -46,9 +49,9 @@ export class InventoryService implements OnDestroy
         private _settingsService: SettingsService,
         private _ngZone: NgZone)
     {
-        this._events            = new EventEmitter();
-        this._unseenTracker     = new UnseenItemTracker(Nitro.instance.communication, this);
-        this._unseenCounts      = new Map();
+        this._events = new EventEmitter();
+        this._unseenTracker = new UnseenItemTracker(Nitro.instance.communication, this);
+        this._unseenCounts = new Map();
 
         this.onRoomSessionEvent = this.onRoomSessionEvent.bind(this);
 
@@ -122,8 +125,8 @@ export class InventoryService implements OnDestroy
 
         this._ngZone.run(() =>
         {
-            this._figureSetIds          = parser.figureSetIds;
-            this._boundFurnitureNames   = parser.boundsFurnitureNames;
+            this._figureSetIds = parser.figureSetIds;
+            this._boundFurnitureNames = parser.boundsFurnitureNames;
         });
     }
 
@@ -193,9 +196,9 @@ export class InventoryService implements OnDestroy
     public hideAllControllers(): void
     {
         this.furnitureVisible = false;
-        this.botsVisible      = false;
-        this.petsVisible      = false;
-        this.badgesVisible    = false;
+        this.botsVisible = false;
+        this.petsVisible = false;
+        this.badgesVisible = false;
     }
 
     public get events(): Subject<string>
@@ -361,5 +364,31 @@ export class InventoryService implements OnDestroy
     public get boundFurnitureNames(): string[]
     {
         return this._boundFurnitureNames;
+    }
+
+    public get isDeletingItems(): boolean
+    {
+        return this._isDeletingItems;
+    }
+
+    public set isDeletingItems(val: boolean)
+    {
+        this._isDeletingItems = val;
+    }
+
+    public get toDeleteItems(): GroupItem[]
+    {
+        return this._toDeleteItems;
+    }
+
+    public deleteItems(deleteAllItems: boolean)
+    {
+        const itemList = [];
+        this.toDeleteItems.forEach(x => itemList.push(...x.items.getKeys()));
+
+        Nitro.instance.communication.connection.send(new EmptyItemsComposer(deleteAllItems, itemList.length, ...itemList));
+        // TODO: DELETE ITEMS
+        this.isDeletingItems = false;
+        this._toDeleteItems = [];
     }
 }

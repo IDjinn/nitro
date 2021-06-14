@@ -11,6 +11,7 @@ import { HabbopediaModule } from './habbopedia/habbopedia.module';
 import { HotelViewModule } from './hotelview/hotelview.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { MainComponent } from './main/main.component';
+import { ModToolModule } from './mod-tool/mod-tool.module';
 import { NavigatorModule } from './navigator/navigator.module';
 import { NotificationModule } from './notification/notification.module';
 import { PurseModule } from './purse/purse.module';
@@ -19,7 +20,6 @@ import { ToolbarModule } from './toolbar/toolbar.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { UserSettingsModule } from './user-settings/user-settings.module';
 import { WiredModule } from './wired/wired.module';
-import { ModToolModule } from './mod-tool/mod-tool.module';
 
 @NgModule({
     imports: [
@@ -40,17 +40,16 @@ import { ModToolModule } from './mod-tool/mod-tool.module';
         WiredModule,
         ModToolModule,
         UserProfileModule,
-        WiredModule,
         ChatHistoryModule,
         GroupsModule,
-        UserSettingsModule
+        UserSettingsModule,
     ],
     exports: [
-        MainComponent
+        MainComponent,
     ],
     declarations: [
-        MainComponent
+        MainComponent,
     ]
 })
 export class ComponentsModule
-{}
+{ }

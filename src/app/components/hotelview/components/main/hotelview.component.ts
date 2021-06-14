@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Nitro } from '../../../../../client/nitro/Nitro';
 import { SessionService } from '../../../../security/services/session.service';
 
@@ -8,6 +8,9 @@ import { SessionService } from '../../../../security/services/session.service';
 })
 export class HotelViewComponent
 {
+    @Input()
+    public visible: boolean = false;
+
     private _background: string;
     private _backgroundColour: string;
     private _sun: string;
@@ -19,13 +22,13 @@ export class HotelViewComponent
     constructor(
         private sessionService: SessionService)
     {
-        this._background        = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['background']);
-        this._backgroundColour  = Nitro.instance.getConfiguration('hotelview.images')['background.colour'];
-        this._sun               = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['sun']);
-        this._drape             = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['drape']);
-        this._left              = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['left']);
-        this._right             = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['right']);
-        this._rightRepeat       = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['right.repeat']);
+        this._background = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['background']);
+        this._backgroundColour = Nitro.instance.getConfiguration('hotelview.images')['background.colour'];
+        this._sun = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['sun']);
+        this._drape = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['drape']);
+        this._left = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['left']);
+        this._right = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['right']);
+        this._rightRepeat = Nitro.instance.core.configuration.interpolate(Nitro.instance.getConfiguration('hotelview.images')['right.repeat']);
     }
 
     public get figure(): string

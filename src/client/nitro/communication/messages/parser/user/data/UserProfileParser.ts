@@ -19,18 +19,18 @@ export class UserProfileParser implements IMessageParser
 
     public flush(): boolean
     {
-        this._id                = 0;
-        this._username          = null;
-        this._figure            = null;
-        this._motto             = null;
-        this._registration      = null;
+        this._id = 0;
+        this._username = null;
+        this._figure = null;
+        this._motto = null;
+        this._registration = null;
         this._achievementPoints = 0;
-        this._friendsCount      = 0;
-        this._isMyFriend        = false;
-        this._requestSent       = false;
-        this._isOnline          = false;
-        this._groups            = [];
-        this._lastVisit         = 0;
+        this._friendsCount = 0;
+        this._isMyFriend = false;
+        this._requestSent = false;
+        this._isOnline = false;
+        this._groups = [];
+        this._lastVisit = 0;
 
         return true;
     }
@@ -39,17 +39,17 @@ export class UserProfileParser implements IMessageParser
     {
         if(!wrapper) return false;
 
-        this._id                = wrapper.readInt();
-        this._username          = wrapper.readString();
-        this._figure            = wrapper.readString();
-        this._motto             = wrapper.readString();
-        this._registration      = wrapper.readString();
+        this._id = wrapper.readInt();
+        this._username = wrapper.readString();
+        this._figure = wrapper.readString();
+        this._motto = wrapper.readString();
+        this._registration = wrapper.readString();
         this._achievementPoints = wrapper.readInt();
-        this._friendsCount      = wrapper.readInt();
-        this._isMyFriend        = wrapper.readBoolean();
-        this._requestSent       = wrapper.readBoolean();
-        this._isOnline          = wrapper.readBoolean();
-        let groupsCount         = wrapper.readInt();
+        this._friendsCount = wrapper.readInt();
+        this._isMyFriend = wrapper.readBoolean();
+        this._requestSent = wrapper.readBoolean();
+        this._isOnline = wrapper.readBoolean();
+        let groupsCount = wrapper.readInt();
 
         while(groupsCount > 0)
         {
@@ -58,7 +58,7 @@ export class UserProfileParser implements IMessageParser
             groupsCount--;
         }
 
-        this._lastVisit         = wrapper.readInt();
+        this._lastVisit = wrapper.readInt();
 
         return true;
     }
@@ -118,8 +118,8 @@ export class UserProfileParser implements IMessageParser
         return this._groups;
     }
 
-    public get lastVisit(): number
+    public get lastVisit(): string
     {
-        return this._lastVisit;
+        return new Date(Date.now() - this._lastVisit).toLocaleDateString();
     }
 }

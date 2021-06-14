@@ -2,6 +2,8 @@ import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { IMessageEvent } from '../../../../client/core/communication/messages/IMessageEvent';
 import { EventDispatcher } from '../../../../client/core/events/EventDispatcher';
 import { IEventDispatcher } from '../../../../client/core/events/IEventDispatcher';
+import { WhisperGroupEvent } from '../../../../client/nitro/communication/messages/incoming/djinn/friend/whisper/WhisperGroupEvent';
+import { WhisperGroupOpEvent } from '../../../../client/nitro/communication/messages/incoming/djinn/friend/whisper/WhisperGroupOpEvent';
 import { AcceptFriendResultEvent } from '../../../../client/nitro/communication/messages/incoming/friendlist/AcceptFriendResultEvent';
 import { FindFriendsProcessResultEvent } from '../../../../client/nitro/communication/messages/incoming/friendlist/FindFriendsProcessResultEvent';
 import { FollowFriendFailedEvent } from '../../../../client/nitro/communication/messages/incoming/friendlist/FollowFriendFailedEvent';
@@ -47,6 +49,8 @@ export class FriendListService implements OnDestroy
     private _friends: Map<number, MessengerFriend>;
     private _requests: Map<number, MessengerRequest>;
     private _threads: Map<number, MessengerThread>;
+    private _whispers: Map<number, MessengerFriend>;
+    private _whispersThreads: Map<number, MessengerThread>;
 
     private _userFriendLimit: number;
     private _normalFriendLimit: number;
@@ -64,13 +68,15 @@ export class FriendListService implements OnDestroy
         this._component = null;
         this._events = new EventDispatcher();
 
-        this._friends               = new Map();
-        this._requests              = new Map();
-        this._threads               = new Map();
+        this._friends = new Map();
+        this._requests = new Map();
+        this._threads = new Map();
+        this._whispersThreads = new Map();
+        this._whispers = new Map();
 
-        this._userFriendLimit       = 0;
-        this._normalFriendLimit     = 0;
-        this._extendedFriendLimit   = 0;
+        this._userFriendLimit = 0;
+        this._normalFriendLimit = 0;
+        this._extendedFriendLimit = 0;
         this._avatarSearchResults = new AvatarSearchResults();
 
         this.registerMessages();
@@ -104,7 +110,12 @@ export class FriendListService implements OnDestroy
                 new NewConsoleMessageEvent(this.onNewConsoleMessageEvent.bind(this)),
                 new NewFriendRequestEvent(this.onNewFriendRequestEvent.bind(this)),
                 new RoomInviteErrorEvent(this.onRoomInviteErrorEvent.bind(this)),
-                new RoomInviteEvent(this.onRoomInviteEvent.bind(this))
+                new RoomInviteEvent(this.onRoomInviteEvent.bind(this)),
+
+
+                //djinn
+                new WhisperGroupEvent(this.onWhisperGroupEvent.bind(this)),
+                new WhisperGroupOpEvent(this.onWhisperGroupOpEvent.bind(this))
             ];
 
             for(const message of this._messages) Nitro.instance.communication.registerMessageEvent(message);
@@ -268,7 +279,7 @@ export class FriendListService implements OnDestroy
                 message = '${friendlist.error.requestnotfound}';
                 break;
             default:
-                message = (`Received messenger error: msg: ${ parser.clientMessageId }, errorCode: ${ parser.errorCode }`);
+                message = (`Received messenger error: msg: ${parser.clientMessageId}, errorCode: ${parser.errorCode}`);
                 break;
 
         }
@@ -286,9 +297,9 @@ export class FriendListService implements OnDestroy
 
         this._ngZone.run(() =>
         {
-            this._userFriendLimit       = parser.userFriendLimit;
-            this._normalFriendLimit     = parser.normalFriendLimit;
-            this._extendedFriendLimit   = parser.extendedFriendLimit;
+            this._userFriendLimit = parser.userFriendLimit;
+            this._normalFriendLimit = parser.normalFriendLimit;
+            this._extendedFriendLimit = parser.extendedFriendLimit;
         });
 
         this.requestFriendRequests();
@@ -349,6 +360,27 @@ export class FriendListService implements OnDestroy
     }
 
     private onRoomInviteErrorEvent(event: RoomInviteErrorEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.getParser();
+
+        if(!parser) return;
+
+        console.log(parser);
+    }
+
+    private onWhisperGroupEvent(event: WhisperGroupEvent): void
+    {
+        if(!event) return;
+
+        const parser = event.getParser();
+
+        if(!parser) return;
+
+        console.log(parser);
+    }
+    private onWhisperGroupOpEvent(event: WhisperGroupOpEvent): void
     {
         if(!event) return;
 

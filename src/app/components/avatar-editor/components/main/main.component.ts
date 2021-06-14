@@ -27,9 +27,9 @@ import { AvatarEditorService } from '../../services/avatar-editor.service';
 })
 export class AvatarEditorMainComponent implements OnInit, OnDestroy
 {
-    private static _Str_18590: string   = 'hr-100.hd-180-7.ch-215-66.lg-270-79.sh-305-62.ha-1002-70.wa-2007';
-    private static _Str_18820: string   = 'hr-515-33.hd-600-1.ch-635-70.lg-716-66-62.sh-735-68';
-    private static _Str_6331: number    = 2;
+    private static _Str_18590: string = 'hr-100.hd-180-7.ch-215-66.lg-270-79.sh-305-62.ha-1002-70.wa-2007';
+    private static _Str_18820: string = 'hr-515-33.hd-600-1.ch-635-70.lg-716-66-62.sh-735-68';
+    private static _Str_6331: number = 2;
 
     @Input()
     public visible: boolean = false;
@@ -48,22 +48,22 @@ export class AvatarEditorMainComponent implements OnInit, OnDestroy
         private _inventoryService: InventoryService,
         private _settingsService: SettingsService,
         private _avatarEditorService: AvatarEditorService)
-    {}
+    { }
 
     public ngOnInit(): void
     {
         this._avatarEditorService.component = this;
 
-        this._figureStructureData   = Nitro.instance.avatar.structureData;
-        this._categories            = new AdvancedMap();
-        this._figures               = new Map();
-        this._gender                = FigureData.M;
-        this._clubMemberLevel       = 0;
-        this._lastSavedFigure       = '';
-        this._lastSavedGender       = FigureData.M;
+        this._figureStructureData = Nitro.instance.avatar.structureData;
+        this._categories = new AdvancedMap();
+        this._figures = new Map();
+        this._gender = FigureData.M;
+        this._clubMemberLevel = 0;
+        this._lastSavedFigure = '';
+        this._lastSavedGender = FigureData.M;
 
-        const maleFigure    = new FigureData();
-        const femaleFigure  = new FigureData();
+        const maleFigure = new FigureData();
+        const femaleFigure = new FigureData();
 
         maleFigure.loadAvatarData(AvatarEditorMainComponent._Str_18590, FigureData.M);
         femaleFigure.loadAvatarData(AvatarEditorMainComponent._Str_18820, FigureData.F);
@@ -161,8 +161,8 @@ export class AvatarEditorMainComponent implements OnInit, OnDestroy
 
         if(reset)
         {
-            this._lastSavedFigure   = figure;
-            this._lastSavedGender   = this._gender;
+            this._lastSavedFigure = figure;
+            this._lastSavedGender = this._gender;
         }
     }
 
@@ -170,7 +170,7 @@ export class AvatarEditorMainComponent implements OnInit, OnDestroy
     {
         if(!k || !_arg_2) return null;
 
-        const _local_3: AvatarEditorGridPartItem[]    = [];
+        const _local_3: AvatarEditorGridPartItem[] = [];
         const _local_4: AvatarEditorGridColorItem[][] = [];
 
         let _local_5 = 0;
@@ -194,8 +194,8 @@ export class AvatarEditorMainComponent implements OnInit, OnDestroy
 
         if(!_local_10) _local_10 = [];
 
-        const _local_11: IPartColor[]   = new Array(_local_10.length);
-        const _local_12                 = this._Str_24175;
+        const _local_11: IPartColor[] = new Array(_local_10.length);
+        const _local_12 = this._Str_24175;
 
         for(const _local_13 of _local_9.colors.values())
         {
@@ -227,7 +227,7 @@ export class AvatarEditorMainComponent implements OnInit, OnDestroy
             }
         }
 
-        let _local_24           = 0;
+        let _local_24 = 0;
         let _local_14: string[] = [];
 
         if(_local_12)
@@ -426,8 +426,8 @@ export class AvatarEditorMainComponent implements OnInit, OnDestroy
 
         if(!figureData) return;
 
-        this._lastSavedFigure   = figureData.getFigureString();
-        this._lastSavedGender   = figureData.gender;
+        this._lastSavedFigure = figureData.getFigureString();
+        this._lastSavedGender = figureData.gender;
 
         Nitro.instance.communication.connection.send(new UserFigureComposer(figureData.gender, this._lastSavedFigure));
 

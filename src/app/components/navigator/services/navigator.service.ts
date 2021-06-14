@@ -102,22 +102,22 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
         private _settingsService: SettingsService,
         private _ngZone: NgZone)
     {
-        this._component         = null;
-        this._topLevelContexts  = [];
-        this._topLevelContext   = null;
-        this._categories        = [];
-        this._filter            = NavigatorService.SEARCH_FILTERS[0];
+        this._component = null;
+        this._topLevelContexts = [];
+        this._topLevelContext = null;
+        this._categories = [];
+        this._filter = NavigatorService.SEARCH_FILTERS[0];
         this._lastSearchResults = [];
-        this._lastSearch        = '';
-        this._data              = new NavigatorData();
+        this._lastSearch = '';
+        this._data = new NavigatorData();
 
-        this._tradeSettings     = [];
+        this._tradeSettings = [];
 
-        this._homeRoomId        = -1;
+        this._homeRoomId = -1;
 
-        this._isSearching       = false;
-        this._isLoaded          = false;
-        this._isLoading         = false;
+        this._isSearching = false;
+        this._isLoaded = false;
+        this._isLoading = false;
 
         this.onRoomSessionEvent = this.onRoomSessionEvent.bind(this);
 
@@ -234,12 +234,12 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
         {
             this._data.currentRoomOwner = false;
             this._data.currentRoomOwner = parser.isOwner;
-            this._data.currentRoomId    = parser.roomId;
+            this._data.currentRoomId = parser.roomId;
         });
 
         Nitro.instance.communication.connection.send(new RoomInfoComposer(parser.roomId, true, false));
 
-        LegacyExternalInterface.call('legacyTrack', 'navigator', 'private', [ parser.roomId ]);
+        LegacyExternalInterface.call('legacyTrack', 'navigator', 'private', [parser.roomId]);
     }
 
     private onRoomInfoEvent(event: RoomInfoEvent): void
@@ -255,7 +255,7 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
             if(parser.roomEnter)
             {
                 this._data.enteredGuestRoom = parser.data;
-                this._data.staffPick        = parser.data.roomPicker;
+                this._data.staffPick = parser.data.roomPicker;
 
                 const isCreatedRoom = (this._data.createdRoomId === parser.data.roomId);
 
@@ -270,7 +270,7 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
             {
                 if(parser.roomForward)
                 {
-                    if((parser.data.ownerName !== Nitro.instance.sessionDataManager.userName) && !parser.isGroupMember)
+                    if((parser.data.ownerName !== Nitro.instance.sessionDataManager.userName) && !parser.isGroupMember && Nitro.instance.sessionDataManager.isAmbassador == false)
                     {
                         switch(parser.data.doorMode)
                         {
@@ -288,7 +288,7 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
                 else
                 {
                     this._data.enteredGuestRoom = parser.data;
-                    this._data.staffPick        = parser.data.roomPicker;
+                    this._data.staffPick = parser.data.roomPicker;
                 }
             }
         });
@@ -340,8 +340,8 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
 
         this._ngZone.run(() =>
         {
-            this._data.createdRoomId    = parser.roomId;
-            this._roomInfoShowing       = false;
+            this._data.createdRoomId = parser.roomId;
+            this._roomInfoShowing = false;
         });
 
         this.goToRoom(parser.roomId);
@@ -535,7 +535,7 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
             this.setCurrentContextByCode(resultSet.code);
 
             this._lastSearchResults = resultSet.results;
-            this._isSearching       = false;
+            this._isSearching = false;
         });
     }
 
@@ -705,7 +705,7 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
         this._roomInfoShowing = !this._roomInfoShowing;
     }
 
-    public linkReceived(k: string):void
+    public linkReceived(k: string): void
     {
         const parts = k.split('/');
 
@@ -732,7 +732,7 @@ export class NavigatorService implements OnDestroy, ILinkEventTracker
         }
     }
 
-    public enterRoomWebRequest(k: string, _arg_2:boolean=false, _arg_3:string=null)
+    public enterRoomWebRequest(k: string, _arg_2: boolean = false, _arg_3: string = null)
     {
         //this._webRoomReport = _arg_2;
         //this._webRoomReportedName = _arg_3;
