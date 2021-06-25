@@ -48,20 +48,20 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
     constructor()
     {
         this.container = null;
-        this._widget    = null;
+        this._widget = null;
 
-        this._disposed  = false;
+        this._disposed = false;
 
         this.onRoomSessionPetInfoUpdateEvent = this.onRoomSessionPetInfoUpdateEvent.bind(this);
     }
 
     public dispose(): void
     {
-        if(this.disposed) return;
+        if (this.disposed) return;
 
         this.container = null;
 
-        this._disposed  = true;
+        this._disposed = true;
     }
 
     public update(): void
@@ -70,12 +70,12 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
     public processWidgetMessage(message: RoomWidgetMessage): RoomWidgetUpdateEvent
     {
-        if(!message || !this._container) return null;
+        if (!message || !this._container) return null;
 
-        let userId                  = 0;
-        let userData: RoomUserData  = null;
+        let userId = 0;
+        let userData: RoomUserData = null;
 
-        if(message instanceof RoomWidgetUserActionMessage)
+        if (message instanceof RoomWidgetUserActionMessage)
         {
             userId = message.userId;
 
@@ -94,7 +94,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
                 RoomWidgetUserActionMessage.RWUAM_TREAT_PET
             ];
 
-            if(petMessages.indexOf(message.type) >= 0)
+            if (petMessages.indexOf(message.type) >= 0)
             {
                 userData = this._container.roomSession.userDataManager.getPetData(userId);
             }
@@ -103,19 +103,19 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
                 userData = this._container.roomSession.userDataManager.getUserData(userId);
             }
 
-            if(!userData) return null;
+            if (!userData) return null;
         }
 
-        let objectId        = 0;
-        let objectCategory  = 0;
+        let objectId = 0;
+        let objectCategory = 0;
 
-        if(message instanceof RoomWidgetFurniActionMessage)
+        if (message instanceof RoomWidgetFurniActionMessage)
         {
-            objectId        = message.furniId;
-            objectCategory  = message.furniCategory;
+            objectId = message.furniId;
+            objectCategory = message.furniCategory;
         }
 
-        switch(message.type)
+        switch (message.type)
         {
             case RoomWidgetRoomObjectMessage.GET_OBJECT_INFO:
                 return this.processObjectInfoMessage((message as RoomWidgetRoomObjectMessage));
@@ -163,7 +163,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
                 this._container.roomSession.sendTakeRightsMessage((message as RoomWidgetUserActionMessage).userId);
                 break;
             case RoomWidgetUserActionMessage.RWUAM_START_TRADING:
-                if(userData) this._widget.inventoryTrading.startTrade(userData.roomIndex, userData.name);
+                if (userData) this._widget.inventoryTrading.startTrade(userData.roomIndex, userData.name);
                 break;
             // case RoomWidgetUserActionMessage.RWUAM_OPEN_HOME_PAGE:
             //     this._container.sessionDataManager._Str_21275((message as RoomWidgetUserActionMessage).userId, _local_3.name);
@@ -224,19 +224,19 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
                 return;
             case RoomWidgetFurniActionMessage.RWFAM_SAVE_STUFF_DATA: {
                 const _local_10 = (message as RoomWidgetFurniActionMessage).objectData;
-                if(_local_10)
+                if (_local_10)
                 {
-                    const _local_19 = new Map<string,string>();
+                    const _local_19 = new Map<string, string>();
 
                     const _local_20 = _local_10.split('\t');
 
-                    if(_local_20)
+                    if (_local_20)
                     {
-                        for(const _local_21 of _local_20)
+                        for (const _local_21 of _local_20)
                         {
                             const _local_22 = _local_21.split('=', 2);
 
-                            if(_local_22 && _local_22.length === 2)
+                            if (_local_22 && _local_22.length === 2)
                             {
                                 const _local_23 = _local_22[0];
                                 const _local_24 = _local_22[1];
@@ -253,7 +253,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
                 break;
             }
             case RoomWidgetUserActionMessage.RWUAM_REQUEST_PET_UPDATE:
-                if(this._container.roomSession && this._container.roomSession.userDataManager) this._container.roomSession.userDataManager.requestPetInfo(userId);
+                if (this._container.roomSession && this._container.roomSession.userDataManager) this._container.roomSession.userDataManager.requestPetInfo(userId);
                 break;
             case RoomWidgetUserActionMessage.RWUAM_REPORT:
                 break;
@@ -284,9 +284,9 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
     public processEvent(k: NitroEvent): void
     {
-        if(!event) return;
+        if (!event) return;
 
-        switch(k.type)
+        switch (k.type)
         {
             case RoomSessionUserBadgesEvent.RSUBE_BADGES: {
                 const badgesEvent = (k as RoomSessionUserBadgesEvent);
@@ -301,20 +301,20 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
     {
         const roomId = this._container.roomSession.roomId;
 
-        switch(message.category)
+        switch (message.category)
         {
             case RoomObjectCategory.FLOOR:
             case RoomObjectCategory.WALL:
                 this._Str_23142(message, roomId);
                 break;
             case RoomObjectCategory.UNIT: {
-                if(!this._container.roomSession || !this._container.sessionDataManager || !this._container.events || !this._container.roomEngine) return null;
+                if (!this._container.roomSession || !this._container.sessionDataManager || !this._container.events || !this._container.roomEngine) return null;
 
                 const userData = this._container.roomSession.userDataManager.getUserDataByIndex(message.id);
 
-                if(!userData) return null;
+                if (!userData) return null;
 
-                switch(userData.type)
+                switch (userData.type)
                 {
                     case RoomObjectType.PET:
                         this.selectPet(userData.webID);
@@ -340,25 +340,25 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
     {
         const roomId = this._container.roomSession.roomId;
 
-        let id          = 0;
-        let name: string        = null;
-        let type        = 0;
-        let roomIndex   = 0;
+        let id = 0;
+        let name: string = null;
+        let type = 0;
+        let roomIndex = 0;
 
-        switch(k.category)
+        switch (k.category)
         {
             case RoomObjectCategory.FLOOR:
             case RoomObjectCategory.WALL: {
-                if(!this._container.events || !this._container.roomEngine) return null;
+                if (!this._container.events || !this._container.roomEngine) return null;
 
-                const roomObject    = this._container.roomEngine.getRoomObject(roomId, k.id, k.category);
-                const objectType    = roomObject.type;
+                const roomObject = this._container.roomEngine.getRoomObject(roomId, k.id, k.category);
+                const objectType = roomObject.type;
 
-                if(objectType.indexOf('poster') === 0)
+                if (objectType.indexOf('poster') === 0)
                 {
-                    id          = -1;
-                    name        = ('${poster_' + parseInt(objectType.replace('poster', '')) + '_name}');
-                    roomIndex   = roomObject.id;
+                    id = -1;
+                    name = ('${poster_' + parseInt(objectType.replace('poster', '')) + '_name}');
+                    roomIndex = roomObject.id;
                 }
                 else
                 {
@@ -366,68 +366,68 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
                     const typeId = roomObject.model.getValue<number>(RoomObjectVariable.FURNITURE_TYPE_ID);
 
-                    if(k.category === RoomObjectCategory.FLOOR)
+                    if (k.category === RoomObjectCategory.FLOOR)
                     {
                         furniData = this._container.sessionDataManager.getFloorItemData(typeId);
                     }
 
-                    else if(k.category === RoomObjectCategory.WALL)
+                    else if (k.category === RoomObjectCategory.WALL)
                     {
                         furniData = this._container.sessionDataManager.getWallItemData(typeId);
                     }
 
-                    if(!furniData) return null;
+                    if (!furniData) return null;
 
-                    id          = furniData.id;
-                    name        = furniData.name;
-                    roomIndex   = roomObject.id;
+                    id = furniData.id;
+                    name = furniData.name;
+                    roomIndex = roomObject.id;
                 }
                 break;
             }
             case RoomObjectCategory.UNIT: {
-                if(!this._container.roomSession || !this._container.roomSession.userDataManager) return null;
+                if (!this._container.roomSession || !this._container.roomSession.userDataManager) return null;
 
                 const userData = this._container.roomSession.userDataManager.getUserDataByIndex(k.id);
 
-                if(!userData) return null;
+                if (!userData) return null;
 
-                id          = userData.webID;
-                name        = userData.name;
-                type        = userData.type;
-                roomIndex   = userData.roomIndex;
+                id = userData.webID;
+                name = userData.name;
+                type = userData.type;
+                roomIndex = userData.roomIndex;
                 break;
             }
         }
 
-        if(name) this._container.events.dispatchEvent(new RoomObjectNameEvent(id, k.category, name, type, roomIndex));
+        if (name) this._container.events.dispatchEvent(new RoomObjectNameEvent(id, k.category, name, type, roomIndex));
 
         return null;
     }
 
     private _Str_23142(k: RoomWidgetRoomObjectMessage, _arg_2: number): void
     {
-        if(!this._container || !this._container.events || !this._container.roomEngine) return;
+        if (!this._container || !this._container.events || !this._container.roomEngine) return;
 
-        if(k.id < 0) return;
+        if (k.id < 0) return;
 
         const infostandEvent = new RoomWidgetFurniInfostandUpdateEvent(RoomWidgetFurniInfostandUpdateEvent.FURNI);
 
-        infostandEvent.id       = k.id;
+        infostandEvent.id = k.id;
         infostandEvent.category = k.category;
 
         const roomObject = this._container.roomEngine.getRoomObject(_arg_2, k.id, k.category);
 
-        if(!roomObject) return;
+        if (!roomObject) return;
 
         const model = roomObject.model;
 
-        if(model.getValue<string>(RoomWidgetEnumItemExtradataParameter.INFOSTAND_EXTRA_PARAM))
+        if (model.getValue<string>(RoomWidgetEnumItemExtradataParameter.INFOSTAND_EXTRA_PARAM))
         {
             infostandEvent.extraParam = model.getValue<string>(RoomWidgetEnumItemExtradataParameter.INFOSTAND_EXTRA_PARAM);
         }
 
-        const dataFormat    = model.getValue<number>(RoomObjectVariable.FURNITURE_DATA_FORMAT);
-        const objectData    = ObjectDataFactory.getData(dataFormat);
+        const dataFormat = model.getValue<number>(RoomObjectVariable.FURNITURE_DATA_FORMAT);
+        const objectData = ObjectDataFactory.getData(dataFormat);
 
         objectData.initializeFromRoomObjectModel(model);
 
@@ -435,12 +435,12 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
         const objectType = roomObject.type;
 
-        if(objectType.indexOf('poster') === 0)
+        if (objectType.indexOf('poster') === 0)
         {
             const _local_13 = parseInt(objectType.replace('poster', ''));
 
-            infostandEvent.name         = (('${poster_' + _local_13) + '_name}');
-            infostandEvent.description  = (('${poster_' + _local_13) + '_desc}');
+            infostandEvent.name = (('${poster_' + _local_13) + '_name}');
+            infostandEvent.description = (('${poster_' + _local_13) + '_desc}');
         }
         else
         {
@@ -448,74 +448,75 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
             let furnitureData: IFurnitureData = null;
 
-            if(k.category === RoomObjectCategory.FLOOR)
+            if (k.category === RoomObjectCategory.FLOOR)
             {
                 furnitureData = this._container.sessionDataManager.getFloorItemData(_local_14);
             }
 
-            else if(k.category == RoomObjectCategory.WALL)
+            else if (k.category == RoomObjectCategory.WALL)
             {
                 furnitureData = this._container.sessionDataManager.getWallItemData(_local_14);
             }
 
-            if(furnitureData)
+            if (furnitureData)
             {
-                infostandEvent.name                         = furnitureData.name;
-                infostandEvent.description                  = furnitureData.description;
-                infostandEvent.purchaseOfferId              = furnitureData.purchaseOfferId;
+                infostandEvent.name = furnitureData.name;
+                infostandEvent.description = furnitureData.description;
+                infostandEvent.purchaseOfferId = furnitureData.purchaseOfferId;
                 infostandEvent.purchaseCouldBeUsedForBuyout = furnitureData.purchaseCouldBeUsedForBuyout;
-                infostandEvent.rentOfferId                  = furnitureData.rentOfferId;
-                infostandEvent.rentCouldBeUsedForBuyout     = furnitureData.rentCouldBeUsedForBuyout;
-                infostandEvent.availableForBuildersClub     = furnitureData.availableForBuildersClub;
+                infostandEvent.rentOfferId = furnitureData.rentOfferId;
+                infostandEvent.rentCouldBeUsedForBuyout = furnitureData.rentCouldBeUsedForBuyout;
+                infostandEvent.availableForBuildersClub = furnitureData.availableForBuildersClub;
+                infostandEvent.catalogPageId = model.getValue<number>(RoomObjectVariable.CATALOG_PAGE_ID);
 
-                if(this._container.wiredService && (k.category === RoomObjectCategory.FLOOR))
+                if (this._container.wiredService && (k.category === RoomObjectCategory.FLOOR))
                 {
                     this._container.wiredService.selectFurniture(roomObject.id, furnitureData.name);
                 }
             }
         }
 
-        if(objectType.indexOf('post_it') > -1)
+        if (objectType.indexOf('post_it') > -1)
         {
             infostandEvent.isStickie = true;
         }
 
-        const expiryTime        = model.getValue<number>(RoomObjectVariable.FURNITURE_EXPIRY_TIME);
-        const expiryTimestamp   = model.getValue<number>(RoomObjectVariable.FURNITURE_EXPIRTY_TIMESTAMP);
+        const expiryTime = model.getValue<number>(RoomObjectVariable.FURNITURE_EXPIRY_TIME);
+        const expiryTimestamp = model.getValue<number>(RoomObjectVariable.FURNITURE_EXPIRTY_TIMESTAMP);
 
         infostandEvent.expiration = ((expiryTime < 0) ? expiryTime : Math.max(0, (expiryTime - ((Nitro.instance.time - expiryTimestamp) / 1000))));
 
         let roomObjectImage = this._container.roomEngine.getRoomObjectImage(_arg_2, k.id, k.category, new Vector3d(180), 64, null);
 
-        if(!roomObjectImage.data || (roomObjectImage.data.width > 140) || (roomObjectImage.data.height > 200))
+        if (!roomObjectImage.data || (roomObjectImage.data.width > 140) || (roomObjectImage.data.height > 200))
         {
             roomObjectImage = this._container.roomEngine.getRoomObjectImage(_arg_2, k.id, k.category, new Vector3d(180), 1, null);
         }
 
-        if(roomObjectImage && roomObjectImage.data)
+        if (roomObjectImage && roomObjectImage.data)
         {
             const image = Nitro.instance.renderer.extract.image(roomObjectImage.data);
 
-            if(image) infostandEvent.image = image;
+            if (image) infostandEvent.image = image;
         }
 
-        infostandEvent.isWallItem           = (k.category === RoomObjectCategory.WALL);
-        infostandEvent.isRoomOwner          = this._container.roomSession.isRoomOwner;
-        infostandEvent.roomControllerLevel  = this._container.roomSession.controllerLevel;
-        infostandEvent.isAnyRoomOwner       = this._container.sessionDataManager.isModerator;
-        infostandEvent.ownerId              = model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID);
-        infostandEvent.ownerName            = model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME);
-        infostandEvent.usagePolicy          = model.getValue<number>(RoomObjectVariable.FURNITURE_USAGE_POLICY);
+        infostandEvent.isWallItem = (k.category === RoomObjectCategory.WALL);
+        infostandEvent.isRoomOwner = this._container.roomSession.isRoomOwner;
+        infostandEvent.roomControllerLevel = this._container.roomSession.controllerLevel;
+        infostandEvent.isAnyRoomOwner = this._container.sessionDataManager.isModerator;
+        infostandEvent.ownerId = model.getValue<number>(RoomObjectVariable.FURNITURE_OWNER_ID);
+        infostandEvent.ownerName = model.getValue<string>(RoomObjectVariable.FURNITURE_OWNER_NAME);
+        infostandEvent.usagePolicy = model.getValue<number>(RoomObjectVariable.FURNITURE_USAGE_POLICY);
 
         const guildId = model.getValue<number>(RoomObjectVariable.FURNITURE_GUILD_CUSTOMIZED_GUILD_ID);
 
-        if(guildId !== 0)
+        if (guildId !== 0)
         {
             infostandEvent.groupId = guildId;
             //this.container.connection.send(new _Str_2863(guildId, false));
         }
 
-        if(this._container.isOwnerOfFurniture(roomObject))
+        if (this._container.isOwnerOfFurniture(roomObject))
         {
             infostandEvent.isOwner = true;
         }
@@ -568,81 +569,81 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
     {
         let eventType = RoomWidgetUpdateInfostandUserEvent.OWN_USER;
 
-        if(_arg_4.webID !== this._container.sessionDataManager.userId)
+        if (_arg_4.webID !== this._container.sessionDataManager.userId)
         {
             eventType = RoomWidgetUpdateInfostandUserEvent.PEER;
         }
 
         const event = new RoomWidgetUpdateInfostandUserEvent(eventType);
 
-        event.isSpectator   = this._container.roomSession.isSpectator;
-        event.name          = _arg_4.name;
-        event.motto         = _arg_4.custom;
+        event.isSpectator = this._container.roomSession.isSpectator;
+        event.name = _arg_4.name;
+        event.motto = _arg_4.custom;
 
-        if(InfoStandWidgetHandler.ACTIVITY_POINTS_DISPLAY_ENABLED)
+        if (InfoStandWidgetHandler.ACTIVITY_POINTS_DISPLAY_ENABLED)
         {
             event.activityPoints = _arg_4.activityPoints;
         }
 
-        event.webID     = _arg_4.webID;
+        event.webID = _arg_4.webID;
         event.roomIndex = roomIndex;
         event.userType = RoomObjectType.USER;
 
         const roomObject = this._container.roomEngine.getRoomObject(roomId, roomIndex, category);
 
-        if(roomObject)
+        if (roomObject)
         {
             event.carryId = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT);
         }
 
-        if(eventType == RoomWidgetUpdateInfostandUserEvent.OWN_USER)
+        if (eventType == RoomWidgetUpdateInfostandUserEvent.OWN_USER)
         {
             event.realName = this._container.sessionDataManager.realName;
             event._Str_4330 = this._container.sessionDataManager.canChangeName;
         }
 
-        event.isRoomOwner           = this._container.roomSession.isRoomOwner;
-        event.isGuildRoom           = this._container.roomSession.isGuildRoom;
-        event.roomControllerLevel   = this._container.roomSession.controllerLevel;
-        event.isModerator           = this._container.sessionDataManager.isModerator;
-        event.isAmbassador          = this._container.sessionDataManager.isAmbassador;
+        event.isRoomOwner = this._container.roomSession.isRoomOwner;
+        event.isGuildRoom = this._container.roomSession.isGuildRoom;
+        event.roomControllerLevel = this._container.roomSession.controllerLevel;
+        event.isModerator = this._container.sessionDataManager.isModerator;
+        event.isAmbassador = this._container.sessionDataManager.isAmbassador;
 
-        if(eventType === RoomWidgetUpdateInfostandUserEvent.PEER)
+        if (eventType === RoomWidgetUpdateInfostandUserEvent.PEER)
         {
             event.canBeAskedForAFriend = this._container.friendService.canBeAskedForAFriend(_arg_4.webID);
 
             const friend = this._container.friendService.getFriend(_arg_4.webID);
 
-            if(friend)
+            if (friend)
             {
-                event.realName  = friend.realName;
-                event.isFriend  = true;
+                event.realName = friend.realName;
+                event.isFriend = true;
             }
 
-            if(roomObject)
+            if (roomObject)
             {
                 const flatControl = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_FLAT_CONTROL);
 
-                if(flatControl !== null) event.flatControl = flatControl;
+                if (flatControl !== null) event.flatControl = flatControl;
 
                 event._Str_6394 = this._Str_23100(event);
                 event._Str_5990 = this._Str_22729(event);
                 event._Str_6701 = this._Str_23573(event);
             }
 
-            event.isIgnored     = this._container.sessionDataManager.isUserIgnored(_arg_4.name);
-            event.respectLeft   = this._container.sessionDataManager.respectsLeft;
+            event.isIgnored = this._container.sessionDataManager.isUserIgnored(_arg_4.name);
+            event.respectLeft = this._container.sessionDataManager.respectsLeft;
 
-            const isShuttingDown    = this._container.sessionDataManager.isSystemShutdown;
-            const tradeMode         = this._container.roomSession.tradeMode;
+            const isShuttingDown = this._container.sessionDataManager.isSystemShutdown;
+            const tradeMode = this._container.roomSession.tradeMode;
 
-            if(isShuttingDown)
+            if (isShuttingDown)
             {
                 event.canTrade = false;
             }
             else
             {
-                switch(tradeMode)
+                switch (tradeMode)
                 {
                     case RoomTradingLevelEnum._Str_14475: {
                         const _local_15 = ((event.roomControllerLevel !== RoomControllerLevel.NONE) && (event.roomControllerLevel !== RoomControllerLevel.GUILD_MEMBER));
@@ -662,9 +663,9 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
             event._Str_6622 = RoomWidgetUpdateInfostandUserEvent._Str_18400;
 
-            if(isShuttingDown) event._Str_6622 = RoomWidgetUpdateInfostandUserEvent._Str_14161;
+            if (isShuttingDown) event._Str_6622 = RoomWidgetUpdateInfostandUserEvent._Str_14161;
 
-            if(tradeMode !== RoomTradingLevelEnum._Str_9173) event._Str_6622 = RoomWidgetUpdateInfostandUserEvent._Str_13798;
+            if (tradeMode !== RoomTradingLevelEnum._Str_9173) event._Str_6622 = RoomWidgetUpdateInfostandUserEvent._Str_13798;
 
             // const _local_12 = this._container.sessionDataManager.userId;
             // _local_13 = this._container.sessionDataManager._Str_18437(_local_12);
@@ -687,26 +688,26 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
     {
         const event = new RoomWidgetUpdateInfostandUserEvent(RoomWidgetUpdateInfostandUserEvent.BOT);
 
-        event.name          = _arg_4.name;
-        event.motto         = _arg_4.custom;
-        event.webID         = _arg_4.webID;
-        event.roomIndex     = roomIndex;
-        event.userType      = _arg_4.type;
+        event.name = _arg_4.name;
+        event.motto = _arg_4.custom;
+        event.webID = _arg_4.webID;
+        event.roomIndex = roomIndex;
+        event.userType = _arg_4.type;
 
         const roomObject = this._container.roomEngine.getRoomObject(roomId, roomIndex, category);
 
-        if(roomObject)
+        if (roomObject)
         {
             event.carryId = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT);
         }
 
-        event.isRoomOwner           = this._container.roomSession.isRoomOwner;
-        event.isGuildRoom           = this._container.roomSession.isGuildRoom;
-        event.roomControllerLevel   = this._container.roomSession.controllerLevel;
-        event.isModerator           = this._container.sessionDataManager.isModerator;
-        event._Str_5990             = this._container.roomSession.isRoomOwner;
-        event.badges                = [ RoomWidgetUpdateInfostandUserEvent._Str_7492 ];
-        event.figure                = _arg_4.figure;
+        event.isRoomOwner = this._container.roomSession.isRoomOwner;
+        event.isGuildRoom = this._container.roomSession.isGuildRoom;
+        event.roomControllerLevel = this._container.roomSession.controllerLevel;
+        event.isModerator = this._container.sessionDataManager.isModerator;
+        event._Str_5990 = this._container.roomSession.isRoomOwner;
+        event.badges = [RoomWidgetUpdateInfostandUserEvent._Str_7492];
+        event.figure = _arg_4.figure;
 
         this._container.events.dispatchEvent(event);
     }
@@ -715,42 +716,42 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
     {
         const event = new RoomWidgetRentableBotInfostandUpdateEvent();
 
-        event.name          = _arg_4.name;
-        event.motto         = _arg_4.custom;
-        event.id            = _arg_4.webID;
-        event.roomIndex     = roomIndex;
-        event.ownerId       = _arg_4.ownerId;
-        event.ownerName     = _arg_4.ownerName;
-        event.botSkills     = _arg_4.botSkills;
+        event.name = _arg_4.name;
+        event.motto = _arg_4.custom;
+        event.id = _arg_4.webID;
+        event.roomIndex = roomIndex;
+        event.ownerId = _arg_4.ownerId;
+        event.ownerName = _arg_4.ownerName;
+        event.botSkills = _arg_4.botSkills;
 
         const roomObject = this._container.roomEngine.getRoomObject(roomId, roomIndex, category);
 
-        if(roomObject)
+        if (roomObject)
         {
             event.carryId = roomObject.model.getValue<number>(RoomObjectVariable.FIGURE_CARRY_OBJECT);
         }
 
-        event._Str_3246             = this._container.roomSession.isRoomOwner;
-        event.roomControllerLevel   = this._container.roomSession.controllerLevel;
-        event._Str_3529             = this._container.sessionDataManager.isModerator;
-        event.badges                = [ RoomWidgetUpdateInfostandUserEvent._Str_7492 ];
-        event.figure                = _arg_4.figure;
+        event._Str_3246 = this._container.roomSession.isRoomOwner;
+        event.roomControllerLevel = this._container.roomSession.controllerLevel;
+        event._Str_3529 = this._container.sessionDataManager.isModerator;
+        event.badges = [RoomWidgetUpdateInfostandUserEvent._Str_7492];
+        event.figure = _arg_4.figure;
 
         this._container.events.dispatchEvent(event);
     }
 
     private _Str_9213(event: RoomWidgetUpdateInfostandUserEvent): boolean
     {
-        if(event.isGuildRoom) return (event.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN);
+        if (event.isGuildRoom) return (event.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN);
 
         return (event.roomControllerLevel >= RoomControllerLevel.GUEST);
     }
 
-    private _Str_23100(userInfo:RoomWidgetUpdateInfostandUserEvent): boolean
+    private _Str_23100(userInfo: RoomWidgetUpdateInfostandUserEvent): boolean
     {
         const settingsFunction = function (event: RoomWidgetUpdateInfostandUserEvent, moderation: RoomModerationParser): boolean
         {
-            switch(moderation.allowMute)
+            switch (moderation.allowMute)
             {
                 case RoomModerationParser._Str_5047:
                     return this._Str_9213(event);
@@ -762,11 +763,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
         return this._Str_18027(userInfo, settingsFunction);
     }
 
-    private _Str_22729(userInfo:RoomWidgetUpdateInfostandUserEvent): boolean
+    private _Str_22729(userInfo: RoomWidgetUpdateInfostandUserEvent): boolean
     {
-        const settingsFunction = function(event: RoomWidgetUpdateInfostandUserEvent, _arg_2: RoomModerationParser): boolean
+        const settingsFunction = function (event: RoomWidgetUpdateInfostandUserEvent, _arg_2: RoomModerationParser): boolean
         {
-            switch(_arg_2.allowKick)
+            switch (_arg_2.allowKick)
             {
                 case RoomModerationParser._Str_11537:
                     return true;
@@ -780,11 +781,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
         return this._Str_18027(userInfo, settingsFunction);
     }
 
-    private _Str_23573(userInfo:RoomWidgetUpdateInfostandUserEvent): boolean
+    private _Str_23573(userInfo: RoomWidgetUpdateInfostandUserEvent): boolean
     {
-        const settingsFunction = function(event: RoomWidgetUpdateInfostandUserEvent, _arg_2: RoomModerationParser): boolean
+        const settingsFunction = function (event: RoomWidgetUpdateInfostandUserEvent, _arg_2: RoomModerationParser): boolean
         {
-            switch(_arg_2.allowBan)
+            switch (_arg_2.allowBan)
             {
                 case RoomModerationParser._Str_5047:
                     return this._Str_9213(event);
@@ -798,23 +799,23 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
     private _Str_18027(event: RoomWidgetUpdateInfostandUserEvent, _arg_2: Function): boolean
     {
-        if(!this._container.roomSession._Str_7411) return false;
+        if (!this._container.roomSession._Str_7411) return false;
 
         const moderationSettings = this._container.roomSession.moderationSettings;
 
         let flag = false;
 
-        if(moderationSettings) flag = _arg_2(event, moderationSettings);
+        if (moderationSettings) flag = _arg_2(event, moderationSettings);
 
         return (flag && (event.flatControl < RoomControllerLevel.ROOM_OWNER));
     }
 
     // public  _Str_23922(k:Map):void
-    public _Str_23922(k:Map<string,string>):void
+    public _Str_23922(k: Map<string, string>): void
     {
-        if(!this._widget) return;
+        if (!this._widget) return;
 
-        if(this._container.sessionDataManager.hasSecurity(5))
+        if (this._container.sessionDataManager.hasSecurity(5))
         {
             // TODO: Map should be `k`
             this._container.connection.send(new RoomAdsUpdateComposer(this._widget.furniData.id, k));
@@ -823,15 +824,15 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
     private onRoomSessionPetInfoUpdateEvent(event: RoomSessionPetInfoUpdateEvent): void
     {
-        if(!event || !this._container || !this._container.events) return;
+        if (!event || !this._container || !this._container.events) return;
 
         const petData = event._Str_24727;
 
-        if(!petData) return;
+        if (!petData) return;
 
         const roomUserData = this._container.roomSession.userDataManager.getPetData(petData.id);
 
-        if(!roomUserData) return;
+        if (!roomUserData) return;
 
         const figure = roomUserData.figure;
         const figureData = new PetFigureData(figure);
@@ -841,9 +842,9 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
         let _local_7: string = null;
 
-        if(_local_5 === PetType.MONSTERPLANT)
+        if (_local_5 === PetType.MONSTERPLANT)
         {
-            if(petData.level >= petData._Str_20651) _local_7 = 'std';
+            if (petData.level >= petData._Str_20651) _local_7 = 'std';
             else _local_7 = ('grw' + petData.level);
         }
 
@@ -858,40 +859,40 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
         const isOwner = (petData.ownerId === this._container.sessionDataManager.userId);
         const infostandEvent = new RoomWidgetPetInfostandUpdateEvent(_local_5, _local_6, roomUserData.name, petData.id, figureData, isOwner, petData.ownerId, petData.ownerName, roomUserData.roomIndex, petData.rarityLevel);
 
-        infostandEvent.level               = petData.level;
-        infostandEvent.maximumLevel        = petData.maximumLevel;
-        infostandEvent.experience          = petData.experience;
+        infostandEvent.level = petData.level;
+        infostandEvent.maximumLevel = petData.maximumLevel;
+        infostandEvent.experience = petData.experience;
         infostandEvent.levelExperienceGoal = petData.levelExperienceGoal;
-        infostandEvent.energy              = petData.energy;
-        infostandEvent.maximumEnergy       = petData.maximumEnergy;
-        infostandEvent.happyness           = petData.happyness;
-        infostandEvent.maximumHappyness    = petData.maximumHappyness;
-        infostandEvent.respect             = petData.respect;
-        infostandEvent._Str_2985           = this._container.sessionDataManager.respectsPetLeft;
-        infostandEvent.age                 = petData.age;
-        infostandEvent.saddle              = petData.saddle;
-        infostandEvent.rider               = petData.rider;
-        infostandEvent.breedable           = petData.breedable;
-        infostandEvent.fullyGrown          = petData.fullyGrown;
-        infostandEvent.dead                = petData.dead;
-        infostandEvent.rarityLevel         = petData.rarityLevel;
-        infostandEvent._Str_3307           = petData._Str_3307;
-        infostandEvent._Str_5114           = false;
-        infostandEvent.publiclyRideable    = petData.publiclyRideable;
-        infostandEvent.maximumTimeToLive   = petData.maximumTimeToLive;
+        infostandEvent.energy = petData.energy;
+        infostandEvent.maximumEnergy = petData.maximumEnergy;
+        infostandEvent.happyness = petData.happyness;
+        infostandEvent.maximumHappyness = petData.maximumHappyness;
+        infostandEvent.respect = petData.respect;
+        infostandEvent._Str_2985 = this._container.sessionDataManager.respectsPetLeft;
+        infostandEvent.age = petData.age;
+        infostandEvent.saddle = petData.saddle;
+        infostandEvent.rider = petData.rider;
+        infostandEvent.breedable = petData.breedable;
+        infostandEvent.fullyGrown = petData.fullyGrown;
+        infostandEvent.dead = petData.dead;
+        infostandEvent.rarityLevel = petData.rarityLevel;
+        infostandEvent._Str_3307 = petData._Str_3307;
+        infostandEvent._Str_5114 = false;
+        infostandEvent.publiclyRideable = petData.publiclyRideable;
+        infostandEvent.maximumTimeToLive = petData.maximumTimeToLive;
         infostandEvent.remainingTimeToLive = petData.remainingTimeToLive;
-        infostandEvent.remainingGrowTime   = petData.remainingGrowTime;
-        infostandEvent.publiclyBreedable   = petData.publiclyBreedable;
+        infostandEvent.remainingGrowTime = petData.remainingGrowTime;
+        infostandEvent.publiclyBreedable = petData.publiclyBreedable;
 
         const roomSession = this._container.roomSession;
 
-        if(isOwner)
+        if (isOwner)
         {
             infostandEvent._Str_5114 = true;
         }
         else
         {
-            if(roomSession.isRoomOwner || this._container.sessionDataManager.isModerator || (roomSession.controllerLevel >= RoomControllerLevel.GUEST)) infostandEvent._Str_5114 = true;
+            if (roomSession.isRoomOwner || this._container.sessionDataManager.isModerator || (roomSession.controllerLevel >= RoomControllerLevel.GUEST)) infostandEvent._Str_5114 = true;
         }
 
         this._container.events.dispatchEvent(infostandEvent);
@@ -909,11 +910,11 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
     private getPetFigurePart(figure: string, index: number): number
     {
-        if(!figure || !figure.length) return -1;
+        if (!figure || !figure.length) return -1;
 
         const parts = figure.split(' ');
 
-        if(parts.length > 0) return parseInt(parts[index]);
+        if (parts.length > 0) return parseInt(parts[index]);
 
         return -1;
     }
@@ -985,7 +986,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
     public get eventTypes(): string[]
     {
-        return [ RoomSessionUserBadgesEvent.RSUBE_BADGES ];
+        return [RoomSessionUserBadgesEvent.RSUBE_BADGES];
     }
 
     public get container(): IRoomWidgetHandlerContainer
@@ -995,9 +996,9 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
     public set container(k: IRoomWidgetHandlerContainer)
     {
-        if(this._container)
+        if (this._container)
         {
-            if(this._container.roomSessionManager)
+            if (this._container.roomSessionManager)
             {
                 this._container.roomSessionManager.events.removeEventListener(RoomSessionPetInfoUpdateEvent.PET_INFO, this.onRoomSessionPetInfoUpdateEvent);
             }
@@ -1005,9 +1006,9 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler
 
         this._container = k;
 
-        if(this._container)
+        if (this._container)
         {
-            if(this._container.roomSessionManager)
+            if (this._container.roomSessionManager)
             {
                 this._container.roomSessionManager.events.addEventListener(RoomSessionPetInfoUpdateEvent.PET_INFO, this.onRoomSessionPetInfoUpdateEvent);
             }

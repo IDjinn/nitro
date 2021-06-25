@@ -1,14 +1,19 @@
+import { MessengerFriend } from '../../../../../../../app/components/friendlist/common/MessengerFriend';
+import { FriendListService } from '../../../../../../../app/components/friendlist/services/friendlist.service';
 import { IMessageDataWrapper } from '../../../../../../core/communication/messages/IMessageDataWrapper';
 import { IMessageParser } from '../../../../../../core/communication/messages/IMessageParser';
+import { FriendParser } from '../../../incoming/friendlist/FriendParser';
 export class WhisperGroupEventParser implements IMessageParser
 {
     private _id: number;
-    private _users: string[];
+    private _friends: MessengerFriend[];
+    private _delete: boolean;
 
     flush(): boolean
     {
         this._id = -1;
-        this._users = [];
+        this._friends = [];
+        this._delete = false;
         return true;
     }
 
@@ -17,11 +22,16 @@ export class WhisperGroupEventParser implements IMessageParser
         if(!wrapper) throw new Error('invalid_wrapper');
 
         this._id = wrapper.readInt();
+        this._delete = wrapper.readBoolean();
 
         const count = wrapper.readInt();
         for(let i = 0; i < count; i++)
         {
-            this._users[i] = wrapper.readString();
+            const friend = new MessengerFriend();
+            const friendWrapper = new FriendParser(wrapper);
+            friend.populate(friendWrapper);
+
+            this._friends.push(friend);
         }
 
         return true;
@@ -32,10 +42,14 @@ export class WhisperGroupEventParser implements IMessageParser
         return this._id;
     }
 
-    public get users(): string[]
+    public get friends(): MessengerFriend[]
     {
-        return this._users;
+        return this._friends;
     }
 
+    public get delete(): boolean
+    {
+        return this._delete;
+    }
 
 }

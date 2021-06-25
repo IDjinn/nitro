@@ -16,6 +16,7 @@ export class InfoStandFurniData
     private _ownerName: string = '';
     private _rentOfferId: number = -1;
     private _availableForBuildersClub: boolean = false;
+    private _catalogPageId = -1;
 
     public get id(): number
     {
@@ -147,20 +148,31 @@ export class InfoStandFurniData
         this._availableForBuildersClub = flag;
     }
 
+    public get catalogPageId()
+    {
+        return this._catalogPageId;
+    }
+
+    public set catalogPageId(val: number)
+    {
+        this._catalogPageId = val;
+    }
+
     public populate(event: RoomWidgetFurniInfostandUpdateEvent): void
     {
-        this.id                         = event.id;
-        this.category                   = event.category;
-        this.name                       = event.name;
-        this.description                = event.description;
-        this.imageUrl                   = ((event.image && event.image.src) || null);
-        this.purchaseOfferId            = event.purchaseOfferId;
-        this.extraParam                 = event.extraParam;
-        this.stuffData                  = event.stuffData;
-        this.groupId                    = event.groupId;
-        this.ownerName                  = event.ownerName;
-        this.ownerId                    = event.ownerId;
-        this.rentOfferId                = event.rentOfferId;
-        this.availableForBuildersClub   = event.availableForBuildersClub;
+        this.id = event.id;
+        this.category = event.category;
+        this.name = event.name;
+        this.description = event.description;
+        this.imageUrl = ((event.image && event.image.src) || null);
+        this.purchaseOfferId = event.purchaseOfferId;
+        this.extraParam = event.extraParam;
+        this.stuffData = event.stuffData;
+        this.groupId = event.groupId;
+        this.ownerName = event.ownerName;
+        this.ownerId = event.ownerId;
+        this.rentOfferId = event.rentOfferId;
+        this.availableForBuildersClub = event.availableForBuildersClub;
+        this.catalogPageId = event.catalogPageId;
     }
 }

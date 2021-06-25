@@ -39,33 +39,34 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
     private _primaryCanvasScale: number;
     private _primaryCanvasOriginPos: Point;
     private _tempScreenPosVector: Vector3d;
+    private _lastPoint: Point = null;
 
     private _disposed: boolean;
 
     constructor(private _chatHistoryService: ChatHistoryService)
     {
-        this._container                 = null;
-        this._widget                    = null;
+        this._container = null;
+        this._widget = null;
 
-        this._connection                = null;
+        this._connection = null;
 
-        this._avatarColorCache          = new Map();
-        this._avatarImageCache          = new Map();
-        this._petImageCache             = new Map();
-        this._primaryCanvasScale        = 0;
-        this._primaryCanvasOriginPos    = null;
-        this._tempScreenPosVector       = new Vector3d();
+        this._avatarColorCache = new Map();
+        this._avatarImageCache = new Map();
+        this._petImageCache = new Map();
+        this._primaryCanvasScale = 0;
+        this._primaryCanvasOriginPos = null;
+        this._tempScreenPosVector = new Vector3d();
 
-        this._disposed                  = false;
+        this._disposed = false;
     }
 
     public dispose(): void
     {
-        if(this._disposed) return;
+        if (this._disposed) return;
 
         this._container = null;
-        this._widget    = null;
-        this._disposed  = true;
+        this._widget = null;
+        this._disposed = true;
     }
 
     public update(): void
@@ -75,33 +76,33 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
 
     private _Str_20006(): void
     {
-        if(!this._container || !this._container.roomSession || !this._container.roomEngine || !this._container.events) return;
+        if (!this._container || !this._container.roomSession || !this._container.roomEngine || !this._container.events) return;
 
-        const canvasId  = this._container.getFirstCanvasId();
-        const roomId    = this._container.roomSession.roomId;
-        const canvas    = this._container.roomEngine.getRoomInstanceRenderingCanvas(roomId, canvasId);
+        const canvasId = this._container.getFirstCanvasId();
+        const roomId = this._container.roomSession.roomId;
+        const canvas = this._container.roomEngine.getRoomInstanceRenderingCanvas(roomId, canvasId);
 
-        if(!canvas) return;
+        if (!canvas) return;
 
-        const geometry      = canvas.geometry;
+        const geometry = canvas.geometry;
         const geometryScale = (geometry.scale / canvas.scale);
 
-        if(!geometry) return;
+        if (!geometry) return;
 
         let scale = 1;
 
-        if(this._primaryCanvasScale > 0) scale = (geometry.scale / this._primaryCanvasScale);
+        if (this._primaryCanvasScale > 0) scale = (geometry.scale / this._primaryCanvasScale);
 
-        if(!this._primaryCanvasOriginPos)
+        if (!this._primaryCanvasOriginPos)
         {
-            this._tempScreenPosVector.x     = 0;
-            this._tempScreenPosVector.y     = 0;
-            this._tempScreenPosVector.z     = 0;
-            this._primaryCanvasOriginPos    = geometry.getScreenPoint(this._tempScreenPosVector);
-            this._primaryCanvasScale        = (geometry.scale - 10);
+            this._tempScreenPosVector.x = 0;
+            this._tempScreenPosVector.y = 0;
+            this._tempScreenPosVector.z = 0;
+            this._primaryCanvasOriginPos = geometry.getScreenPoint(this._tempScreenPosVector);
+            this._primaryCanvasScale = (geometry.scale - 10);
         }
 
-        let eventType               = '';
+        let eventType = '';
         let _local_6: RoomWidgetUpdateEvent = null;
 
         this._tempScreenPosVector.x = 0;
@@ -110,20 +111,20 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
 
         const screenPoint = geometry.getScreenPoint(this._tempScreenPosVector);
 
-        if(screenPoint)
+        if (screenPoint)
         {
             const offset = this._container.roomEngine.getRoomInstanceRenderingCanvasOffset(roomId, canvasId);
 
-            if(offset)
+            if (offset)
             {
                 screenPoint.set((screenPoint.x + offset.x), (screenPoint.y + offset.y));
             }
 
-            if(((!(screenPoint.x == this._primaryCanvasOriginPos.x)) || (!(screenPoint.y == this._primaryCanvasOriginPos.y))))
+            if (((!(screenPoint.x == this._primaryCanvasOriginPos.x)) || (!(screenPoint.y == this._primaryCanvasOriginPos.y))))
             {
                 const _local_9 = PointMath._Str_15193(screenPoint, PointMath._Str_6038(this._primaryCanvasOriginPos, scale));
 
-                if(((!(_local_9.x == 0)) || (!(_local_9.y == 0))))
+                if (((!(_local_9.x == 0)) || (!(_local_9.y == 0))))
                 {
                     eventType = RoomWidgetRoomViewUpdateEvent.POSITION_CHANGED;
                     _local_6 = new RoomWidgetRoomViewUpdateEvent(eventType, null, _local_9);
@@ -135,7 +136,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
             }
         }
 
-        if(geometry.scale !== this._primaryCanvasScale)
+        if (geometry.scale !== this._primaryCanvasScale)
         {
             eventType = RoomWidgetRoomViewUpdateEvent.SCALE_CHANGED;
             _local_6 = new RoomWidgetRoomViewUpdateEvent(eventType, null, null, geometry.scale);
@@ -148,83 +149,88 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
 
     private getBubbleLocation(roomId: number, userLocation: IVector3D): Point
     {
-        const geometry  = this._container.roomEngine.getRoomInstanceGeometry(roomId, this._container.getFirstCanvasId());
-        const scale     = this._container.roomEngine.getRoomInstanceRenderingCanvasScale(roomId, this._container.getFirstCanvasId());
 
-        let x   = ((document.body.offsetWidth * scale) / 2);
-        let y   = ((document.body.offsetHeight * scale) / 2);
+        if (this._lastPoint)
+            return this._lastPoint;
 
-        if(geometry && userLocation)
+        const geometry = this._container.roomEngine.getRoomInstanceGeometry(roomId, this._container.getFirstCanvasId());
+        const scale = this._container.roomEngine.getRoomInstanceRenderingCanvasScale(roomId, this._container.getFirstCanvasId());
+
+        let x = ((document.body.offsetWidth * scale) / 2);
+        let y = ((document.body.offsetHeight * scale) / 2);
+
+        if (geometry && userLocation)
         {
             const screenPoint = geometry.getScreenPoint(userLocation);
 
-            if(screenPoint)
+            if (screenPoint)
             {
-                x   = (x + (screenPoint.x * scale));
-                y   = (y + (screenPoint.y * scale));
+                x = (x + (screenPoint.x * scale));
+                y = (y + (screenPoint.y * scale));
 
                 const offsetPoint = this._container.roomEngine.getRoomInstanceRenderingCanvasOffset(roomId, this._container.getFirstCanvasId());
 
-                if(offsetPoint)
+                if (offsetPoint)
                 {
-                    x   = (x + offsetPoint.x);
-                    y   = (y + offsetPoint.y);
+                    x = (x + offsetPoint.x);
+                    y = (y + offsetPoint.y);
                 }
             }
         }
 
+        this._lastPoint = new Point(x, y);
         return new Point(x, y);
     }
 
     public processWidgetMessage(message: RoomWidgetMessage): RoomWidgetUpdateEvent
     {
-        if(!message || this._disposed) return null;
+        if (!message || this._disposed) return null;
 
         return null;
     }
 
     public processEvent(event: NitroEvent): void
     {
-        if(!event || this._disposed) return;
+        if (!event || this._disposed) return;
 
-        switch(event.type)
+        switch (event.type)
         {
             case RoomSessionChatEvent.CHAT_EVENT: {
                 const chatEvent = (event as RoomSessionChatEvent);
 
                 const roomObject = this._container.roomEngine.getRoomObject(chatEvent.session.roomId, chatEvent.objectId, RoomObjectCategory.UNIT);
 
-                if(roomObject)
+                if (roomObject)
                 {
                     const roomGeometry = this._container.roomEngine.getRoomInstanceGeometry(chatEvent.session.roomId, this._container.getFirstCanvasId());
 
-                    if(roomGeometry)
+                    if (roomGeometry)
                     {
                         this._Str_20006();
 
-                        const objectLocation    = roomObject.getLocation();
-                        const bubbleLocation    = this.getBubbleLocation(chatEvent.session.roomId, objectLocation);
-                        const userData          = this._container.roomSession.userDataManager.getUserDataByIndex(chatEvent.objectId);
+                        const objectLocation = roomObject.getLocation();
+                        const bubbleLocation = this.getBubbleLocation(chatEvent.session.roomId, objectLocation);
+                        const userData = this._container.roomSession.userDataManager.getUserDataByIndex(chatEvent.objectId);
 
-                        let username                = '';
-                        let avatarColor             = 0;
+                        let username = '';
+                        let avatarColor = 0;
                         let image: HTMLImageElement = null;
-                        const chatType              = chatEvent.chatType;
-                        let styleId                 = chatEvent.style;
-                        let userType                = 0;
-                        let petType                 = -1;
+                        const chatType = chatEvent.chatType;
+                        let styleId = chatEvent.style;
+                        let userType = 0;
+                        let petType = -1;
 
 
-                        if(userData)
+                        if (userData)
                         {
                             userType = userData.type;
 
                             const figure = userData.figure;
 
-                            switch(userType)
+                            switch (userType)
                             {
                                 case RoomObjectType.PET:
-                                    image   = this.getPetImage(figure, 2, true, 64, roomObject.model.getValue<string>(RoomObjectVariable.FIGURE_POSTURE));
+                                    image = this.getPetImage(figure, 2, true, 64, roomObject.model.getValue<string>(RoomObjectVariable.FIGURE_POSTURE));
                                     petType = new PetFigureData(figure).typeId;
                                     break;
                                 case RoomObjectType.USER:
@@ -238,12 +244,12 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
                             }
 
                             avatarColor = this._avatarColorCache.get(figure);
-                            username    = userData.name;
+                            username = userData.name;
                         }
 
                         let text = chatEvent.message;
 
-                        switch(chatType)
+                        switch (chatType)
                         {
                             case RoomSessionChatEvent._Str_5821:
                                 text = Nitro.instance.getLocalizationWithParameter('widgets.chatbubble.respect', 'username', username);
@@ -255,33 +261,33 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
                                 text = Nitro.instance.getLocalizationWithParameter('widget.chatbubble.pettreat', 'petname', username);
                                 break;
                             case RoomSessionChatEvent._Str_8971:
-                                text = Nitro.instance.getLocalizationWithParameters('widget.chatbubble.handitem', [ 'username', 'handitem' ], [ username, Nitro.instance.getLocalization(('handitem' + chatEvent.extraParam))]);
+                                text = Nitro.instance.getLocalizationWithParameters('widget.chatbubble.handitem', ['username', 'handitem'], [username, Nitro.instance.getLocalization(('handitem' + chatEvent.extraParam))]);
                                 break;
                             case RoomSessionChatEvent._Str_8909: {
-                                const hours     = ((chatEvent.extraParam > 0) ? Math.floor((chatEvent.extraParam / 3600)) : 0).toString();
-                                const minutes   = ((chatEvent.extraParam > 0) ? Math.floor((chatEvent.extraParam % 3600) / 60) : 0).toString();
-                                const seconds   = (chatEvent.extraParam % 60).toString();
+                                const hours = ((chatEvent.extraParam > 0) ? Math.floor((chatEvent.extraParam / 3600)) : 0).toString();
+                                const minutes = ((chatEvent.extraParam > 0) ? Math.floor((chatEvent.extraParam % 3600) / 60) : 0).toString();
+                                const seconds = (chatEvent.extraParam % 60).toString();
 
-                                text = Nitro.instance.getLocalizationWithParameters('widget.chatbubble.mutetime', [ 'hours', 'minutes', 'seconds' ], [ hours, minutes, seconds ]);
+                                text = Nitro.instance.getLocalizationWithParameters('widget.chatbubble.mutetime', ['hours', 'minutes', 'seconds'], [hours, minutes, seconds]);
                                 break;
                             }
                         }
 
                         const historyEntry = new ChatHistoryItem();
 
-                        historyEntry.senderId       = chatEvent.objectId;
-                        historyEntry.senderName     = (userData.name + ':');
-                        historyEntry.senderColor    = avatarColor;
+                        historyEntry.senderId = chatEvent.objectId;
+                        historyEntry.senderName = (userData.name + ':');
+                        historyEntry.senderColor = avatarColor;
 
-                        if(image && image.src) historyEntry.senderImageUrl = image.src;
+                        if (image && image.src) historyEntry.senderImageUrl = image.src;
 
-                        historyEntry.content        = text;
-                        historyEntry.chatType       = chatType;
-                        historyEntry.chatStyle      = styleId;
+                        historyEntry.content = text;
+                        historyEntry.chatType = chatType;
+                        historyEntry.chatStyle = styleId;
 
                         this._chatHistoryService.addItem(chatEvent.session.roomId, historyEntry);
 
-                        if(this._container && this._container.events) this._container.events.dispatchEvent(new RoomWidgetChatUpdateEvent(RoomWidgetChatUpdateEvent.RWCUE_EVENT_CHAT, userData.roomIndex, text, username, RoomObjectCategory.UNIT, userType, petType, bubbleLocation.x, bubbleLocation.y, image, avatarColor, chatEvent.session.roomId, chatType, styleId, []));
+                        if (this._container && this._container.events) this._container.events.dispatchEvent(new RoomWidgetChatUpdateEvent(RoomWidgetChatUpdateEvent.RWCUE_EVENT_CHAT, userData.roomIndex, text, username, RoomObjectCategory.UNIT, userType, petType, bubbleLocation.x, bubbleLocation.y, image, avatarColor, chatEvent.session.roomId, chatType, styleId, []));
                     }
                 }
 
@@ -294,7 +300,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
     {
         let existing = this._avatarImageCache.get(figure);
 
-        if(!existing)
+        if (!existing)
         {
             existing = this.setFigureImage(figure);
         }
@@ -306,7 +312,7 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
     {
         const avatarImage = this._container.avatarRenderManager.createAvatarImage(figure, AvatarScaleType.LARGE, null, this);
 
-        if(!avatarImage) return;
+        if (!avatarImage) return;
 
         const image = avatarImage.getCroppedImage(AvatarSetType.HEAD);
         const color = avatarImage.getPartColor(AvatarFigurePartType.CHEST);
@@ -324,14 +330,14 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
     {
         let existing = this._petImageCache.get((figure + posture));
 
-        if(existing) return existing;
+        if (existing) return existing;
 
-        const figureData   = new PetFigureData(figure);
-        const typeId       = figureData.typeId;
+        const figureData = new PetFigureData(figure);
+        const typeId = figureData.typeId;
 
         const image = this._container.roomEngine.getRoomObjectPetImage(typeId, figureData.paletteId, figureData.color, new Vector3d((direction * 45)), scale, null, false, 0, figureData.customParts, posture);
 
-        if(image)
+        if (image)
         {
             existing = Nitro.instance.renderer.extract.image(image.data);
 
@@ -353,12 +359,12 @@ export class ChatWidgetHandler implements IRoomWidgetHandler, IAvatarImageListen
 
     public get messageTypes(): string[]
     {
-        return [ ];
+        return [];
     }
 
     public get eventTypes(): string[]
     {
-        return [ RoomSessionChatEvent.CHAT_EVENT ];
+        return [RoomSessionChatEvent.CHAT_EVENT];
     }
 
     public get container(): IRoomWidgetHandlerContainer

@@ -49,8 +49,6 @@ export class FriendListService implements OnDestroy
     private _friends: Map<number, MessengerFriend>;
     private _requests: Map<number, MessengerRequest>;
     private _threads: Map<number, MessengerThread>;
-    private _whispers: Map<number, MessengerFriend>;
-    private _whispersThreads: Map<number, MessengerThread>;
 
     private _userFriendLimit: number;
     private _normalFriendLimit: number;
@@ -59,6 +57,8 @@ export class FriendListService implements OnDestroy
     private _avatarSearchResults: AvatarSearchResults;
 
     private _friendListReady: boolean = false;
+
+    public static readonly WHISPER_GROUP_RANGE = 10000;
 
     constructor(
         private _notificationService: NotificationService,
@@ -71,8 +71,6 @@ export class FriendListService implements OnDestroy
         this._friends = new Map();
         this._requests = new Map();
         this._threads = new Map();
-        this._whispersThreads = new Map();
-        this._whispers = new Map();
 
         this._userFriendLimit = 0;
         this._normalFriendLimit = 0;
@@ -115,7 +113,7 @@ export class FriendListService implements OnDestroy
 
                 //djinn
                 new WhisperGroupEvent(this.onWhisperGroupEvent.bind(this)),
-                new WhisperGroupOpEvent(this.onWhisperGroupOpEvent.bind(this))
+                new WhisperGroupEvent(this.onWhisperGroupOpEvent.bind(this))
             ];
 
             for(const message of this._messages) Nitro.instance.communication.registerMessageEvent(message);
@@ -378,7 +376,16 @@ export class FriendListService implements OnDestroy
 
         if(!parser) return;
 
-        console.log(parser);
+        if (parser.delete)
+        {
+            this._threads.delete(FriendListService.WHISPER_GROUP_RANGE + parser.id);
+            parser.friends.map(user => this._friends.delete(user.id));
+            return;
+        }
+
+        for (const friend of parser.friends) {
+
+        }
     }
     private onWhisperGroupOpEvent(event: WhisperGroupOpEvent): void
     {

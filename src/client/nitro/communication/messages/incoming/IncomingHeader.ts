@@ -247,7 +247,7 @@ export class IncomingHeader
     public static MARKETPLACE_AFTER_ORDER_STATUS = 2032;
 
 
-    public static DJINN_EMPTY_ITEMS = 1212;
-    public static DJINN_WHISPER_GROUP_EVENT = 1213;
-    public static DJINN_WHISPER_GROUP_UPDATE_EVENT = 1214;
+    public static DJINN_WHERE_BUY_EVENT = 8800;
+    public static DJINN_WHISPER_GROUP_EVENT = 8801;
+    public static DJINN_WHISPER_GROUP_OP_EVENT = 8802;
 }

@@ -30,6 +30,7 @@ export class RoomWidgetFurniInfostandUpdateEvent extends RoomWidgetUpdateEvent
     private _purchaseCouldBeUsedForBuyout: boolean = false;
     private _rentCouldBeUsedForBuyout: boolean = false;
     private _availableForBuildersClub: boolean = false;
+    private _catalogPageId: number = -1;
 
     constructor(k: string)
     {
@@ -264,5 +265,15 @@ export class RoomWidgetFurniInfostandUpdateEvent extends RoomWidgetUpdateEvent
     public set availableForBuildersClub(k: boolean)
     {
         this._availableForBuildersClub = k;
+    }
+
+    public get catalogPageId()
+    {
+        return this._catalogPageId;
+    }
+
+    public set catalogPageId(val: number)
+    {
+        this._catalogPageId = val;
     }
 }

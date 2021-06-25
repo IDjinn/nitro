@@ -55,4 +55,5 @@ export interface IRoomCreator
     setRoomEngineGameMode(roomId: number, isPlaying: boolean): void;
     sessionDataManager: ISessionDataManager;
     roomSessionManager: IRoomSessionManager;
+    activeRoomId: number;
 }

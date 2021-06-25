@@ -27,6 +27,7 @@ import { ClientPingEvent } from './messages/incoming/client/ClientPingEvent';
 import { DesktopViewEvent } from './messages/incoming/desktop/DesktopViewEvent';
 import { WhisperGroupEvent } from './messages/incoming/djinn/friend/whisper/WhisperGroupEvent';
 import { WhisperGroupOpEvent } from './messages/incoming/djinn/friend/whisper/WhisperGroupOpEvent';
+import { WhereBuyEvent } from './messages/incoming/djinn/items/WhereBuyEvent';
 import { AcceptFriendResultEvent } from './messages/incoming/friendlist/AcceptFriendResultEvent';
 import { FindFriendsProcessResultEvent } from './messages/incoming/friendlist/FindFriendsProcessResultEvent';
 import { FollowFriendFailedEvent } from './messages/incoming/friendlist/FollowFriendFailedEvent';
@@ -229,7 +230,10 @@ import { CatalogRedeemVoucherComposer } from './messages/outgoing/catalog/Redeem
 import { ClientPongComposer } from './messages/outgoing/client/ClientPongComposer';
 import { ClientReleaseVersionComposer } from './messages/outgoing/client/ClientReleaseVersionComposer';
 import { DesktopViewComposer } from './messages/outgoing/desktop/DesktopViewComposer';
+import { WhisperGroupComposer } from './messages/outgoing/djinn/friend/whisper/WhisperGroupComposer';
+import { WhisperGroupOpComposer } from './messages/outgoing/djinn/friend/whisper/WhisperGroupOpComposer';
 import { EmptyItemsComposer } from './messages/outgoing/djinn/inventory/EmptyItemsComposer';
+import { WhereBuyComposer } from './messages/outgoing/djinn/items/WhereBuyComposer';
 import { AcceptFriendComposer } from './messages/outgoing/friendlist/AcceptFriendComposer';
 import { DeclineFriendComposer } from './messages/outgoing/friendlist/DeclineFriendComposer';
 import { FindNewFriendsComposer } from './messages/outgoing/friendlist/FindNewFriendsComposer';
@@ -723,6 +727,12 @@ export class NitroMessages implements IMessageConfiguration
         this._events.set(IncomingHeader.MARKETPLACE_ITEM_POSTED, MarketplaceItemPostedEvent);
         this._events.set(IncomingHeader.MARKETPLACE_ITEMS_SEARCHED, MarketplaceOffersReceivedEvent);
         this._events.set(IncomingHeader.MARKETPLACE_AFTER_ORDER_STATUS, MarketplaceAfterOrderStatusEvent);
+
+
+        //DJINN
+        this._events.set(IncomingHeader.DJINN_WHISPER_GROUP_EVENT, WhisperGroupEvent);
+        this._events.set(IncomingHeader.DJINN_WHISPER_GROUP_OP_EVENT, WhisperGroupOpEvent);
+        this._events.set(IncomingHeader.DJINN_WHERE_BUY_EVENT, WhereBuyEvent);
     }
 
     private registerComposers(): void
@@ -1010,9 +1020,10 @@ export class NitroMessages implements IMessageConfiguration
         this._composers.set(OutgoingHeader.USER_SETTINGS_VOLUME, UserSettingsSoundComposer);
 
         // DJNN
-        this._events.set(IncomingHeader.DJINN_EMPTY_ITEMS, EmptyItemsComposer);
-        this._events.set(IncomingHeader.DJINN_WHISPER_GROUP_EVENT, WhisperGroupEvent);
-        this._events.set(IncomingHeader.DJINN_WHISPER_GROUP_UPDATE_EVENT, WhisperGroupOpEvent);
+        this._composers.set(OutgoingHeader.DJINN_EMPTY_ITEMS_COMPOSER, EmptyItemsComposer);
+        this._composers.set(OutgoingHeader.DJINN_WHERE_BUY_COMPOSER, WhereBuyComposer);
+        this._composers.set(OutgoingHeader.DJINN_WHISPER_GROUP_COMPOSER, WhisperGroupComposer);
+        this._composers.set(OutgoingHeader.DJINN_WHISPER_GROUP_OP_COMPOSER, WhisperGroupOpComposer);
     }
 
     public get events(): Map<number, Function>

@@ -48,22 +48,22 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
 
         const isValidController = (event.roomControllerLevel >= RoomControllerLevel.GUEST);
 
-        if(isValidController || event.isOwner || event.isRoomOwner || event.isAnyRoomOwner)
+        if (isValidController || event.isOwner || event.isRoomOwner || event.isAnyRoomOwner)
         {
             canMove = true;
             canRotate = (!event.isWallItem);
 
-            if(event.roomControllerLevel >= RoomControllerLevel.MODERATOR) godMode = true;
+            if (event.roomControllerLevel >= RoomControllerLevel.MODERATOR) godMode = true;
         }
 
-        if((((event.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum._Str_18353) || ((event.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum._Str_18194) && isValidController)) || ((event.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX) && isValidController)) || ((event.extraParam == RoomWidgetEnumItemExtradataParameter.USABLE_PRODUCT) && isValidController))
+        if ((((event.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum._Str_18353) || ((event.usagePolicy === RoomWidgetFurniInfoUsagePolicyEnum._Str_18194) && isValidController)) || ((event.extraParam === RoomWidgetEnumItemExtradataParameter.JUKEBOX) && isValidController)) || ((event.extraParam == RoomWidgetEnumItemExtradataParameter.USABLE_PRODUCT) && isValidController))
         {
             canUse = true;
         }
 
-        if(event.extraParam)
+        if (event.extraParam)
         {
-            if(event.extraParam === RoomWidgetEnumItemExtradataParameter.CRACKABLE_FURNI)
+            if (event.extraParam === RoomWidgetEnumItemExtradataParameter.CRACKABLE_FURNI)
             {
                 const stuffData = (event.stuffData as CrackableDataType);
 
@@ -74,19 +74,19 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
                 this.crackableTarget = stuffData.target;
             }
 
-            if(godMode)
+            if (godMode)
             {
                 const extraParam = event.extraParam.substr(RoomWidgetEnumItemExtradataParameter.BRANDING_OPTIONS.length);
 
-                if(extraParam)
+                if (extraParam)
                 {
                     const parts = extraParam.split('\t');
 
-                    for(const part of parts)
+                    for (const part of parts)
                     {
                         const value = part.split('=');
 
-                        if(value && (value.length === 2))
+                        if (value && (value.length === 2))
                         {
                             this.furniSettingsKeys.push(value[0]);
                             this.furniSettingsValues.push(value[1]);
@@ -105,31 +105,31 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
 
     private togglePickupButton(event: RoomWidgetFurniInfostandUpdateEvent): void
     {
-        if(!event) return;
+        if (!event) return;
 
         this.pickupMode = RoomInfoStandFurniComponent.PICKUP_MODE_NONE;
 
-        if(event.isOwner || event.isAnyRoomOwner)
+        if (event.isOwner || event.isAnyRoomOwner)
         {
             this.pickupMode = RoomInfoStandFurniComponent.PICKUP_MODE_FULL;
         }
 
-        else if(event.isRoomOwner || (event.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN))
+        else if (event.isRoomOwner || (event.roomControllerLevel >= RoomControllerLevel.GUILD_ADMIN))
         {
             this.pickupMode = RoomInfoStandFurniComponent.PICKUP_MODE_EJECT;
         }
 
-        if(event.isStickie) this.pickupMode = RoomInfoStandFurniComponent.PICKUP_MODE_NONE;
+        if (event.isStickie) this.pickupMode = RoomInfoStandFurniComponent.PICKUP_MODE_NONE;
     }
 
     public processButtonAction(action: string): void
     {
-        if(!action || (action === '')) return;
+        if (!action || (action === '')) return;
 
         let messageType: string = null;
         let objectData: string = null;
 
-        switch(action)
+        switch (action)
         {
             case 'move':
                 messageType = RoomWidgetFurniActionMessage.RWFAM_MOVE;
@@ -138,7 +138,7 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
                 messageType = RoomWidgetFurniActionMessage.RWFUAM_ROTATE;
                 break;
             case 'pickup':
-                if(this.pickupMode === RoomInfoStandFurniComponent.PICKUP_MODE_FULL)
+                if (this.pickupMode === RoomInfoStandFurniComponent.PICKUP_MODE_FULL)
                 {
                     messageType = RoomWidgetFurniActionMessage.RWFAM_PICKUP;
                 }
@@ -156,20 +156,20 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
                 break;
         }
 
-        if(!messageType) return;
+        if (!messageType) return;
 
         this.widget.messageListener.processWidgetMessage(new RoomWidgetFurniActionMessage(messageType, this.furniData.id, this.furniData.category, this.furniData.purchaseOfferId, objectData));
     }
 
     private getSettingsAsString(): string
     {
-        if(!this.furniSettingsKeys.length || !this.furniSettingsValues.length) return '';
+        if (!this.furniSettingsKeys.length || !this.furniSettingsValues.length) return '';
 
         let data = '';
 
         let i = 0;
 
-        while(i < this.furniSettingsKeys.length)
+        while (i < this.furniSettingsKeys.length)
         {
             const key = this.furniSettingsKeys[i];
             const value = this.furniSettingsValues[i];
@@ -184,14 +184,14 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
 
     public openFurniGroupInfo(): void
     {
-        if(!this.furniData.groupId) return;
+        if (!this.furniData.groupId) return;
 
         Nitro.instance.createLinkEvent('groups/info/' + this.furniData.groupId);
     }
 
     public get getStuffDataAsStringDataType(): StringDataType
     {
-        if(!this.furniData) return null;
+        if (!this.furniData) return null;
 
         return (this.furniData.stuffData as StringDataType);
     }
@@ -203,11 +203,12 @@ export class RoomInfoStandFurniComponent extends RoomInfoStandBaseComponent
 
     public get haveInCatalog()
     {
-        return true;
+        return this.furniData.catalogPageId >= 0;
     }
 
     public openInCatalog()
     {
         // TODO
+        Nitro.instance.createLinkEvent('catalog/' + this.furniData.catalogPageId);
     }
 }
